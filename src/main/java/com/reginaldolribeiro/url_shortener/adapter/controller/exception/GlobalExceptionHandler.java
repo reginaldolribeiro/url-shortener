@@ -24,17 +24,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({InvalidUrlException.class, UrlNullableException.class})
-//    @ExceptionHandler(InvalidUrlException.class)
     public ResponseEntity<ErrorResponse> handleInvalidUrlException(InvalidUrlException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
-
-    /*@ExceptionHandler(UrlNullableException.class)
-    public ResponseEntity<ErrorResponse> handleUrlNullableException(UrlNullableException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }*/
 
     @ExceptionHandler(IdGenerationException.class)
     public ResponseEntity<ErrorResponse> handleInternalServerError(IdGenerationException ex) {
