@@ -1,6 +1,5 @@
-package com.reginaldolribeiro.url_shortener.adapter;
+package com.reginaldolribeiro.url_shortener.adapter.repository;
 
-import com.reginaldolribeiro.url_shortener.adapter.database.UserRepositoryDynamoDB;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
 import org.springframework.stereotype.Service;

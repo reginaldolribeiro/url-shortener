@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.database;
+package com.reginaldolribeiro.url_shortener.adapter.repository;
 
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter;
+package com.reginaldolribeiro.url_shortener.adapter.repository;
 
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.port.UrlRepositoryPort;
