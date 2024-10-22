@@ -5,7 +5,6 @@ import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlInput;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
@@ -16,11 +15,6 @@ public class ShortUrlController {
 
     public ShortUrlController(CreateShortUrlPort createShortUrlPort) {
         this.createShortUrlPort = createShortUrlPort;
-    }
-
-    @GetMapping("/{text}")
-    public String hello(@PathVariable String text){
-        return "Hello " + text;
     }
 
     @PostMapping
