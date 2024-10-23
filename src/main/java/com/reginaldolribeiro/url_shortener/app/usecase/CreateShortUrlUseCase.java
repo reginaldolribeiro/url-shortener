@@ -37,15 +37,15 @@ public class CreateShortUrlUseCase implements CreateShortUrlPort {
         var user = userRepositoryPort.get(input.userId())
                 .orElseThrow(() -> new UserNotFoundException("User " + input.userId() + " not found."));
 
-        var shortenedUrl = generateShortUrl(input.longUrl());
-        var url = Url.create(shortenedUrl, sanitizedUrl, user);
+        var shortenedUrlId = idGeneratorPort.generate();
+        var url = Url.create(shortenedUrlId, sanitizedUrl, user);
 
         urlRepositoryPort.save(url);
         urlCacheRepositoryPort.save(url);
 
         return new CreateShortUrlOutput(
                 url.getUser().id().toString(),
-                shortenedUrl,
+                getFullShortenedUrl(shortenedUrlId),
                 sanitizedUrl
         );
     }
@@ -70,10 +70,8 @@ public class CreateShortUrlUseCase implements CreateShortUrlPort {
         }
     }
 
-    private String generateShortUrl(String longUrl) {
-        var id = idGeneratorPort.generate();
-//        return id;
-        return configurationService.getBaseUrl() + id;
+    private String getFullShortenedUrl(String shortenedUrlId) {
+        return configurationService.getBaseUrl() + shortenedUrlId;
     }
 
 }

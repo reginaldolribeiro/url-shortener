@@ -9,6 +9,7 @@ import java.util.UUID;
 @Service
 public class IdGenerator implements IdGeneratorPort {
     private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    public static final int SHORT_URL_ID_LENGTH = 7;
 
     @Override
     public String generate() {
@@ -16,8 +17,14 @@ public class IdGenerator implements IdGeneratorPort {
         if(id.isBlank()){
             throw new IdGenerationException("Error when generating short URL.");
         }
-        return id.substring(0,7);
-//        return "abc345k";
+        return id.substring(0, SHORT_URL_ID_LENGTH);
+
+//        String shortId;
+//        do {
+//            shortId = generate(); // Your existing generate method
+//        } while (repository.existsById(shortId));
+
+
     }
 
 
@@ -33,14 +40,12 @@ public class IdGenerator implements IdGeneratorPort {
         if (value == 0) {
             return "0";
         }
-
         // Handle negative values by converting them to positive
         if (value < 0) {
             value = Math.abs(value);
         }
 
         StringBuilder sb = new StringBuilder();
-
         // Convert the value to Base62 without handling for negative values
         while (value > 0) {
             int remainder = (int) (value % 62);
@@ -51,8 +56,4 @@ public class IdGenerator implements IdGeneratorPort {
         return sb.reverse().toString();
     }
 
-    //    public static void main(String[] args) {
-//        var a = toBase62(UUID.randomUUID().toString()).substring(0, 7);
-//        System.out.println(a);
-//    }
 }
