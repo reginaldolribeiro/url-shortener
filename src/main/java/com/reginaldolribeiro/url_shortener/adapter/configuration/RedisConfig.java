@@ -1,6 +1,7 @@
 package com.reginaldolribeiro.url_shortener.adapter.configuration;
 
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,9 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 public class RedisConfig {
+
+    @Value("${spring.redis.ttl}")
+    private int springRedisTtl;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
@@ -34,7 +38,7 @@ public class RedisConfig {
     @Bean
     public RedisCacheManager cacheManager(LettuceConnectionFactory connectionFactory) {
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10)) // Set the TTL for cache entries
+                .entryTtl(Duration.ofMinutes(springRedisTtl)) // Set the TTL for cache entries
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)
