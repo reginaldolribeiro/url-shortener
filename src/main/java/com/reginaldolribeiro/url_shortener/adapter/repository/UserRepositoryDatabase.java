@@ -10,13 +10,6 @@ import java.util.UUID;
 @Service
 public class UserRepositoryDatabase implements UserRepositoryPort {
 
-//    private final UserRepositoryDynamoDB userRepositoryDynamoDB;
-//
-//    public UserRepositoryDatabase(UserRepositoryDynamoDB userRepositoryDynamoDB) {
-//        this.userRepositoryDynamoDB = userRepositoryDynamoDB;
-//    }
-
-
     @Override
     public Optional<User> get(String userId) {
         if(userId.equals("1")){

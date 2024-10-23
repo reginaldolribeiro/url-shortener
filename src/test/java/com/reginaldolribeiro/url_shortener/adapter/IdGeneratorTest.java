@@ -21,11 +21,12 @@ class IdGeneratorTest {
      */
     @Test
     public void testShouldGenerateAnBase62IdWith7Chars() {
-        String BASE62_PATTERN_REGEX = "^[0-9A-Za-z]+$";
+        final int SHORT_URL_ID_LENGTH = 7;
+        final String BASE62_PATTERN_REGEX = "^[0-9A-Za-z]+$";
 
         var id = idGenerator.generate();
         assertNotNull(id);
-        assertEquals(7, id.length());
+        assertEquals(SHORT_URL_ID_LENGTH, id.length());
 
         boolean isBase62 = id.matches(BASE62_PATTERN_REGEX);
         assertTrue(isBase62);
