@@ -11,6 +11,7 @@
 	<groupId>com.reginaldolribeiro</groupId>
 	<artifactId>url-shortener</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>url-shortener</name>
 	<description>A service to shorten URLs</description>
 	<url/>
