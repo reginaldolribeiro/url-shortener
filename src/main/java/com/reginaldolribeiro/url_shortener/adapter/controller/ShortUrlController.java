@@ -4,13 +4,16 @@ import com.reginaldolribeiro.url_shortener.app.port.CreateShortUrlPort;
 import com.reginaldolribeiro.url_shortener.app.port.GetLongUrlPort;
 import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlInput;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+@Validated
 @RestController()
 @RequestMapping("/short-url")
 public class ShortUrlController {
@@ -43,7 +46,7 @@ public class ShortUrlController {
     }
 
     @GetMapping("{short_url}")
-    public ResponseEntity<?> getOriginalUrl(@PathVariable("short_url") String shortUrl){
+    public ResponseEntity<?> getOriginalUrl(@PathVariable("short_url") @NotBlank String shortUrl){
         var originalUrl = getLongUrlPort.execute(shortUrl);
         return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
                 .location(URI.create(originalUrl))

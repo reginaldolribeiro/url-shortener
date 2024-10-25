@@ -3,14 +3,11 @@ package com.reginaldolribeiro.url_shortener.app.usecase;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.InvalidUrlException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNullableException;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.IdGeneratorPort;
 import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UrlRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -119,42 +116,4 @@ class CreateShortUrlUseCaseTest {
         verify(urlCacheRepositoryPort, times(0)).save(any(Url.class));
     }
 
-
-    @Test()
-    @Disabled("This logic changes to the adapter layer")
-    public void testDoNotCreateShortUrlWithAnNullUrl() {
-        var input = new CreateShortUrlInput(USER_ID, null);
-
-        assertThrows(UrlNullableException.class, () -> createShortUrlUseCase.execute(input));
-        verify(userRepositoryPort, times(0)).get(USER_ID);
-        verify(idGeneratorPort, times(0)).generate();
-        verify(urlRepositoryPort, times(0)).save(any(Url.class));
-        verify(urlCacheRepositoryPort, times(0)).save(any(Url.class));
-    }
-
-    @Test
-    @Disabled("This logic changes to the adapter layer")
-    public void testDoNotCreateShortUrlWithAnEmptyUrl() {
-        String emptyUrl = " ";
-        var input = new CreateShortUrlInput(USER_ID, emptyUrl);
-
-        assertThrows(UrlNullableException.class, () -> createShortUrlUseCase.execute(input));
-        verify(userRepositoryPort, times(0)).get(USER_ID);
-        verify(idGeneratorPort, times(0)).generate();
-        verify(urlRepositoryPort, times(0)).save(any(Url.class));
-        verify(urlCacheRepositoryPort, times(0)).save(any(Url.class));
-    }
-
-    @Test
-    @Disabled("This logic changes to the adapter layer")
-    public void testDoNotCreateShortUrlWithAnInvalidUrl() {
-        String invalidLongUrl = "example.com/long-url";
-        var input = new CreateShortUrlInput(USER_ID, invalidLongUrl);
-
-        assertThrows(InvalidUrlException.class, () -> createShortUrlUseCase.execute(input));
-        verify(userRepositoryPort, times(0)).get(USER_ID);
-        verify(idGeneratorPort, times(0)).generate();
-        verify(urlRepositoryPort, times(0)).save(any(Url.class));
-        verify(urlCacheRepositoryPort, times(0)).save(any(Url.class));
-    }
 }
