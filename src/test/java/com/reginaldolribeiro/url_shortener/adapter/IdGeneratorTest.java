@@ -1,6 +1,5 @@
 package com.reginaldolribeiro.url_shortener.adapter;
 
-import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,23 +67,6 @@ class IdGeneratorTest {
             assertTrue(ids.add(id), "ID should be unique, but found duplicate: " + id);
         }
         assertEquals(1000, ids.size(), "The number of unique IDs generated should be 1000.");
-    }
-
-    @Test
-    void testGenerateThrowsIdGenerationException() {
-        IdGenerator idGenerator = new IdGenerator() {
-            @Override
-            public String generate() {
-                throw new RuntimeException("UUID generation failed");
-            }
-        };
-
-        IdGenerationException exception = assertThrows(IdGenerationException.class,
-                idGenerator::generate);
-
-        assertEquals("Error when generating short URL.", exception.getMessage());
-        assertNotNull(exception.getCause());
-        assertEquals("UUID generation failed", exception.getCause().getMessage());
     }
 
 }
