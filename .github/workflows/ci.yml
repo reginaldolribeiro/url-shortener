@@ -1,0 +1,35 @@
+name: CI - Build and Test
+
+on:
+  push:      # Run on every commit push
+    branches:
+      - '**' # Matches all branches
+  pull_request:  # Run on every pull request
+    branches:
+      - '**' # Matches all branches
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
+
+      - name: Build and Test
+        run: mvn clean verify
+
+      - name: Generate JaCoCo Report
+        run: mvn jacoco:report
