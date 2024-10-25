@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.controller.exception;
+package com.reginaldolribeiro.url_shortener.adapter.controller;
 
 import java.time.Clock;
 import java.time.LocalDateTime;

@@ -13,22 +13,20 @@ public class IdGenerator implements IdGeneratorPort {
 
     @Override
     public String generate() {
-        var id = toBase62(UUID.randomUUID().toString());
-        if(id.isBlank()){
-            throw new IdGenerationException("Error when generating short URL.");
+        try {
+            var id = toBase62(UUID.randomUUID().toString());
+            return id.substring(0, SHORT_URL_ID_LENGTH);
+        } catch (Exception e) {
+            throw new IdGenerationException("Error when generating short URL.", e);
         }
-        return id.substring(0, SHORT_URL_ID_LENGTH);
 
 //        String shortId;
 //        do {
 //            shortId = generate(); // Your existing generate method
 //        } while (repository.existsById(shortId));
-
-
     }
 
-
-    private static String toBase62(String uuidString) {
+    protected static String toBase62(String uuidString) {
         UUID uuid = UUID.fromString(uuidString);
         long mostSignificantBits = uuid.getMostSignificantBits();
         long leastSignificantBits = uuid.getLeastSignificantBits();
@@ -36,7 +34,7 @@ public class IdGenerator implements IdGeneratorPort {
         return toBase62(mostSignificantBits) + toBase62(leastSignificantBits);
     }
 
-    private static String toBase62(long value) {
+    protected static String toBase62(long value) {
         if (value == 0) {
             return "0";
         }

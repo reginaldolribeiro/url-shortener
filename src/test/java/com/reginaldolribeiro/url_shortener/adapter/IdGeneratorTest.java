@@ -1,9 +1,14 @@
 package com.reginaldolribeiro.url_shortener.adapter;
 
+import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +17,11 @@ class IdGeneratorTest {
 
     @InjectMocks
     private IdGenerator idGenerator;
+
+    @BeforeEach
+    void setUp() {
+        idGenerator = new IdGenerator();
+    }
 
     /**
      * 	^: Starts at the beginning.
@@ -26,10 +36,55 @@ class IdGeneratorTest {
 
         var id = idGenerator.generate();
         assertNotNull(id);
+        assertFalse(id.isBlank());
+        assertFalse(id.isEmpty());
         assertEquals(SHORT_URL_ID_LENGTH, id.length());
 
         boolean isBase62 = id.matches(BASE62_PATTERN_REGEX);
         assertTrue(isBase62);
+    }
+
+    @Test
+    void testToBase62HandlesZeroValue() {
+        // Test if the toBase62 method correctly handles the case when the input value is zero
+        String zeroBase62 = IdGenerator.toBase62(0L);
+        assertEquals("0", zeroBase62, "Base62 representation of zero should be '0'");
+    }
+
+    @Test
+    void testToBase62HandlesNegativeValues() {
+        // Test if the toBase62 method correctly handles negative values by converting them to positive
+        String base62Negative = IdGenerator.toBase62(-12345L);
+        assertNotNull(base62Negative);
+        assertFalse(base62Negative.isEmpty());
+    }
+
+    @Test
+    void testIdGenerationUniqueness() {
+        // Generate multiple IDs and check for uniqueness
+        Set<String> ids = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            String id = idGenerator.generate();
+            assertTrue(ids.add(id), "ID should be unique, but found duplicate: " + id);
+        }
+        assertEquals(1000, ids.size(), "The number of unique IDs generated should be 1000.");
+    }
+
+    @Test
+    void testGenerateThrowsIdGenerationException() {
+        IdGenerator idGenerator = new IdGenerator() {
+            @Override
+            public String generate() {
+                throw new RuntimeException("UUID generation failed");
+            }
+        };
+
+        IdGenerationException exception = assertThrows(IdGenerationException.class,
+                idGenerator::generate);
+
+        assertEquals("Error when generating short URL.", exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals("UUID generation failed", exception.getCause().getMessage());
     }
 
 }

@@ -2,6 +2,7 @@ package com.reginaldolribeiro.url_shortener.adapter.configuration;
 
 import com.reginaldolribeiro.url_shortener.app.port.*;
 import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlUseCase;
+import com.reginaldolribeiro.url_shortener.app.usecase.GetLongUrlUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +13,6 @@ public class UrlShortenerConfiguration {
     private final UrlRepositoryPort urlRepositoryPort;
     private final UrlCacheRepositoryPort urlCacheRepositoryPort;
     private final IdGeneratorPort idGeneratorPort;
-    private final ConfigurationService configurationService;
 
     public UrlShortenerConfiguration(UserRepositoryPort userRepositoryPort,
                                      UrlRepositoryPort urlRepositoryPort,
@@ -23,7 +23,6 @@ public class UrlShortenerConfiguration {
         this.urlRepositoryPort = urlRepositoryPort;
         this.urlCacheRepositoryPort = urlCacheRepositoryPort;
         this.idGeneratorPort = idGeneratorPort;
-        this.configurationService = configurationService;
     }
 
 
@@ -32,8 +31,12 @@ public class UrlShortenerConfiguration {
         return new CreateShortUrlUseCase(userRepositoryPort,
                 urlRepositoryPort,
                 urlCacheRepositoryPort,
-                idGeneratorPort,
-                configurationService);
+                idGeneratorPort);
+    }
+
+    @Bean
+    public GetLongUrlPort getLongUrlPort(){
+        return new GetLongUrlUseCase(urlRepositoryPort, urlCacheRepositoryPort);
     }
 
 }
