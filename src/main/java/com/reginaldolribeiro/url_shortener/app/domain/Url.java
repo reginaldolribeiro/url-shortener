@@ -13,24 +13,32 @@ public class Url implements Serializable {
     private boolean isActive;
 
     public static Url create(String id, String longUrl, User user) {
-        if(id == null || id.isBlank())
+        if (id == null || id.isBlank())
             throw new IllegalArgumentException("Id cannot be null or empty.");
 
-        if(longUrl == null || longUrl.isBlank())
+        if (longUrl == null || longUrl.isBlank())
             throw new IllegalArgumentException("longUrl cannot be null or empty.");
 
-        return new Url(id, longUrl, LocalDateTime.now(Clock.systemUTC()), user, 0, true);
+//        return new Url(id, longUrl, LocalDateTime.now(Clock.systemUTC()), user, 0, true);
+        return new Builder()
+                .id(id)
+                .longUrl(longUrl)
+                .createdDate(LocalDateTime.now(Clock.systemUTC()))
+                .user(user)
+                .clicks(0)
+                .isActive(true)
+                .build();
     }
 
-    public void incrementClick(){
+    public void incrementClick() {
         this.clicks += 1;
     }
 
-    public void enable(){
+    public void enable() {
         this.isActive = true;
     }
 
-    public void disable(){
+    public void disable() {
         this.isActive = false;
     }
 
@@ -58,13 +66,75 @@ public class Url implements Serializable {
         return isActive;
     }
 
-    private Url(String id, String longUrl, LocalDateTime createdDate, User user, Integer clicks, boolean isActive){
-        this.id = id;
-        this.longUrl = longUrl;
-        this.user = user;
-        this.createdDate = createdDate;
-        this.clicks = clicks;
-        this.isActive = isActive;
+//    private Url(String id, String longUrl, LocalDateTime createdDate, User user, Integer clicks, boolean isActive){
+//        this.id = id;
+//        this.longUrl = longUrl;
+//        this.user = user;
+//        this.createdDate = createdDate;
+//        this.clicks = clicks;
+//        this.isActive = isActive;
+//    }
+
+    // Private constructor for the builder
+    private Url(Builder builder) {
+        this.id = builder.id;
+        this.longUrl = builder.longUrl;
+        this.createdDate = builder.createdDate;
+        this.user = builder.user;
+        this.clicks = builder.clicks;
+        this.isActive = builder.isActive;
     }
+
+    // Static inner Builder class
+    public static class Builder {
+        private String id;
+        private String longUrl;
+        private LocalDateTime createdDate;
+        private User user;
+        private Integer clicks;
+        private boolean isActive;
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder longUrl(String longUrl) {
+            this.longUrl = longUrl;
+            return this;
+        }
+
+        public Builder createdDate(LocalDateTime createdDate) {
+            this.createdDate = createdDate;
+            return this;
+        }
+
+        public Builder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder clicks(Integer clicks) {
+            this.clicks = clicks;
+            return this;
+        }
+
+        public Builder isActive(boolean isActive) {
+            this.isActive = isActive;
+            return this;
+        }
+
+        public Url build() {
+            // Validate mandatory fields if needed
+            if (id == null || id.isBlank()) {
+                throw new IllegalArgumentException("ID cannot be null or empty.");
+            }
+            if (longUrl == null || longUrl.isBlank()) {
+                throw new IllegalArgumentException("Long URL cannot be null or empty.");
+            }
+            return new Url(this);
+        }
+    }
+
 
 }

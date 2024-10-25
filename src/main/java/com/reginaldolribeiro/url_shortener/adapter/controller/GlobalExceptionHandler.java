@@ -1,8 +1,10 @@
-package com.reginaldolribeiro.url_shortener.adapter.controller.exception;
+package com.reginaldolribeiro.url_shortener.adapter.controller;
 
+import com.reginaldolribeiro.url_shortener.adapter.controller.exception.InvalidUrlException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlDisabledException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNotFoundException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNullableException;
 import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
-import com.reginaldolribeiro.url_shortener.app.exception.InvalidUrlException;
-import com.reginaldolribeiro.url_shortener.app.exception.UrlNullableException;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,22 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UrlNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUrlNotFoundException(UrlNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler({InvalidUrlException.class, UrlNullableException.class})
     public ResponseEntity<ErrorResponse> handleInvalidUrlException(InvalidUrlException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UrlDisabledException.class)
+    public ResponseEntity<ErrorResponse> handleUrlDisabledException(UrlDisabledException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.GONE.value(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
     }
 
     @ExceptionHandler(IdGenerationException.class)
