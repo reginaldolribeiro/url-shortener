@@ -1,5 +1,6 @@
 package com.reginaldolribeiro.url_shortener.app.usecase;
 
+import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlDisabledException;
 import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
@@ -60,6 +61,22 @@ class GetLongUrlUseCaseTest {
 
         assertNotNull(longUrl);
         assertEquals(expectedLongUrl, longUrl);
+        verify(urlCacheRepositoryPort, times(1)).findByUrlId(SHORTENED_URL);
+        verify(urlRepositoryPort, times(1)).findByShortenedUrl(SHORTENED_URL);
+    }
+
+    @Test
+    public void testShouldThrowExceptionWhenUrlIsDisabled(){
+        var expectedLongUrl = "https://example.com/very-long-url10";
+        var user = new User(UUID.randomUUID(), "Reginaldo", "reginaldolribeiro@gmail.com");
+        var url = Url.create(SHORTENED_URL, expectedLongUrl, user);
+        url.disable();
+
+        when(urlCacheRepositoryPort.findByUrlId(SHORTENED_URL)).thenReturn(Optional.of(url));
+        when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(url));
+
+        assertThrows(UrlDisabledException.class, () -> getLongUrlUseCase.execute(SHORTENED_URL));
+
         verify(urlCacheRepositoryPort, times(1)).findByUrlId(SHORTENED_URL);
         verify(urlRepositoryPort, times(1)).findByShortenedUrl(SHORTENED_URL);
     }

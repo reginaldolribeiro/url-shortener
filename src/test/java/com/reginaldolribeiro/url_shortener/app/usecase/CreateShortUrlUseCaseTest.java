@@ -76,7 +76,7 @@ class CreateShortUrlUseCaseTest {
         String longUrl = "https://example.com/long-url";
         var input = new CreateShortUrlInput(nullableUserId, longUrl);
 
-        when(userRepositoryPort.get(nullableUserId)).thenThrow(UserNotFoundException.class);
+        when(userRepositoryPort.get(nullableUserId)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> createShortUrlUseCase.execute(input));
         verify(userRepositoryPort, times(1)).get(nullableUserId);
