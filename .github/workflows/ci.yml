@@ -3,7 +3,7 @@ name: CI - Build and Test
 on:
   push:      # Run on every commit push
     branches:
-      - '**' # Matches all branches
+      - main
   pull_request:  # Run on every pull request
     branches:
       - '**' # Matches all branches
