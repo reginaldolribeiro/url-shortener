@@ -26,6 +26,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -230,7 +232,11 @@ class ShortUrlControllerTest {
                     .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.message").value("Constraint violations"))
                     .andExpect(jsonPath("$.errors").isNotEmpty())
-                    .andExpect(jsonPath("$.errors['getOriginalUrl.shortUrl']").value("Short URL must be exactly 7 characters long"))
+                    .andExpect(jsonPath("$.errors['getOriginalUrl.shortUrl']").value(anyOf(
+                            is("Short URL cannot be blank"),
+                            is("Short URL must be exactly 7 characters long"),
+                            is("Short URL must be in Base62 format")
+                    ))) // We use anyOf because the validation order is not guaranteed, so either message may appear first.
                     .andExpect(jsonPath("$").isMap())
                     .andExpect(jsonPath("$.status").isNumber())
                     .andExpect(jsonPath("$.message").isString())

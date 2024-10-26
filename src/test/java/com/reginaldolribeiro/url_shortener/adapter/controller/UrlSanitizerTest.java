@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("URL Sanitizer Tests")
@@ -137,6 +136,29 @@ class UrlSanitizerTest {
 
         @ParameterizedTest
         @ValueSource(strings = {
+                "http://",
+                "http://  "
+        })
+        @DisplayName("Should throw InvalidUrlException for URL with missing or blank host")
+        void shouldThrowExceptionForUrlWithMissingOrBlankHost(String url) {
+            assertThrows(InvalidUrlException.class, () -> urlSanitizer.sanitize(url));
+        }
+
+        @Test
+        @DisplayName("Should throw InvalidUrlException for malformed domain")
+        void shouldThrowInvalidUrlExceptionForMalformedDomain() {
+            assertThrows(InvalidUrlException.class, () -> urlSanitizer.sanitize("https://invalid_domain"));
+        }
+
+        @Test
+        @DisplayName("Should throw InvalidUrlException for well-formed URL without valid host")
+        void shouldThrowExceptionForMalformedHost() {
+            String malformedUrl = "https://%20example.com";
+            assertThrows(InvalidUrlException.class, () -> urlSanitizer.sanitize(malformedUrl));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
                 "https://example.com/long-url%",
                 "https://example.com/invalid%url",
                 "https://example.com/long url",
@@ -149,7 +171,11 @@ class UrlSanitizerTest {
                 "https://example.com:abc/long-url",        // Invalid port format
                 "https://-example.com/long-url",           // Hyphen at the beginning of domain
                 "https://example.com/long-url#frag#ment",  // Multiple fragments
-                "https://example!@#.com/long-url"          // Multiple special characters in domain
+                "https://example!@#.com/long-url",          // Multiple special characters in domain
+                "https://example.com/invalid path",
+                "https://example.com/invalid@path!",
+                "https://example.com/invalid%ZZpath",
+                "https://example.com/<script>alert()</script>"
         })
         @DisplayName("Should reject URLs with invalid characters or malformed structures")
         void shouldRejectUrlsWithInvalidCharacters(String invalidLongUrl) {
@@ -170,6 +196,49 @@ class UrlSanitizerTest {
             assertThrows(InvalidUrlException.class, () -> urlSanitizer.sanitize(unsupportedUrl));
         }
 
+    }
+
+    @Nested
+    @DisplayName("isValidShortUrlCode Tests")
+    class IsValidShortUrlCodeTests {
+
+        @Test
+        @DisplayName("Should return false for null input")
+        void shouldReturnFalseForNullInput() {
+            assertFalse(urlSanitizer.isValidShortUrlCode(null));
+        }
+
+        @Test
+        @DisplayName("Should return false for blank input")
+        void shouldReturnFalseForBlankInput() {
+            assertFalse(urlSanitizer.isValidShortUrlCode(" "));
+        }
+
+        @Test
+        @DisplayName("Should return false for input shorter than 7 characters")
+        void shouldReturnFalseForShortInput() {
+            assertFalse(urlSanitizer.isValidShortUrlCode("abc123"));
+        }
+
+        @Test
+        @DisplayName("Should return false for input longer than 7 characters")
+        void shouldReturnFalseForLongInput() {
+            assertFalse(urlSanitizer.isValidShortUrlCode("abc12345"));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"abc123!", "123@456", "ABcd*123"})
+        @DisplayName("Should return false for input with invalid characters")
+        void shouldReturnFalseForInputWithInvalidCharacters(String invalidCode) {
+            assertFalse(urlSanitizer.isValidShortUrlCode(invalidCode));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"abc1234", "ABCDEFG", "1234567", "abcDEFG"})
+        @DisplayName("Should return true for valid Base62 7-character input")
+        void shouldReturnTrueForValidBase62Input(String validCode) {
+            assertTrue(urlSanitizer.isValidShortUrlCode(validCode));
+        }
     }
 
 }
