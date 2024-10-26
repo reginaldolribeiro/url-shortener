@@ -239,6 +239,13 @@ class UrlSanitizerTest {
         void shouldReturnTrueForValidBase62Input(String validCode) {
             assertTrue(urlSanitizer.isValidShortUrlCode(validCode));
         }
+
+        @Test
+        @DisplayName("Should throw InvalidUrlException for malformed URL in sanitize")
+        void shouldThrowExceptionForMalformedUrlInSanitize() {
+            String malformedUrl = "https://example%.com";
+            assertThrows(InvalidUrlException.class, () -> urlSanitizer.sanitize(malformedUrl));
+        }
     }
 
 }

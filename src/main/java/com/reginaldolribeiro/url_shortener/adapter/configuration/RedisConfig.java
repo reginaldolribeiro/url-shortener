@@ -1,7 +1,6 @@
 package com.reginaldolribeiro.url_shortener.adapter.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +27,7 @@ public class RedisConfig {
     // Inject the ObjectMapper bean from JacksonConfig
     public RedisConfig(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.objectMapper.registerModule(new JavaTimeModule()); // Ensure module is registered
+//        this.objectMapper.registerModule(new JavaTimeModule()); // Ensure module is registered
     }
 
     @Bean

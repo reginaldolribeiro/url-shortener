@@ -112,7 +112,8 @@ class GetLongUrlUseCaseTest {
         when(urlCacheRepositoryPort.findByUrlId(SHORTENED_URL)).thenReturn(Optional.of(url));
         when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(url));
 
-        assertThrows(UrlDisabledException.class, () -> getLongUrlUseCase.execute(SHORTENED_URL));
+        UrlDisabledException exception = assertThrows(UrlDisabledException.class, () -> getLongUrlUseCase.execute(SHORTENED_URL));
+        assertEquals("URL is disabled.", exception.getMessage());
 
         verify(urlCacheRepositoryPort, times(1)).findByUrlId(SHORTENED_URL);
         verify(urlRepositoryPort, times(1)).findByShortenedUrl(SHORTENED_URL);
