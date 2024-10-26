@@ -1,5 +1,6 @@
 package com.reginaldolribeiro.url_shortener.app.domain;
 
+import com.reginaldolribeiro.url_shortener.FixtureTests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +17,8 @@ class UrlTest {
 
     private static final String VALID_ID = "2cnbJVQ";
     private static final String VALID_LONG_URL = "https://example.com/very-long-url8";
-    private static final User VALID_USER = new User(UUID.randomUUID(), "User1", "user1@gmail.com");
+    private static final User VALID_USER = FixtureTests.createUser();
+    private static final Url URL = Url.create(VALID_ID, VALID_LONG_URL, VALID_USER);
 
     @Nested
     @DisplayName("Valid URL creation tests")
@@ -26,25 +27,22 @@ class UrlTest {
         @Test
         @DisplayName("Should create a URL with valid parameters")
         void shouldCreateAnUrlWithValidParameters() {
-            var url = Url.create(VALID_ID, VALID_LONG_URL, VALID_USER);
-
             assertAll(
-                    () -> assertNotNull(url),
-                    () -> assertEquals(VALID_ID, url.getId()),
-                    () -> assertEquals(VALID_LONG_URL, url.getLongUrl()),
-                    () -> assertEquals("User1", url.getUser().name()),
-                    () -> assertEquals("user1@gmail.com", url.getUser().email())
+                    () -> assertNotNull(URL),
+                    () -> assertEquals(VALID_ID, URL.getId()),
+                    () -> assertEquals(VALID_LONG_URL, URL.getLongUrl()),
+                    () -> assertEquals(VALID_USER.name(), URL.getUser().name()),
+                    () -> assertEquals(VALID_USER.email(), URL.getUser().email())
             );
         }
 
         @Test
         @DisplayName("Should set created date correctly")
         void shouldSetCreatedDateCorrectly() {
-            Url url = Url.create(VALID_ID, VALID_LONG_URL, VALID_USER);
             assertAll(
-                    () -> assertNotNull(url),
-                    () -> assertNotNull(url.getCreatedDate()),
-                    () -> assertTrue(url.getCreatedDate().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1)))
+                    () -> assertNotNull(URL),
+                    () -> assertNotNull(URL.getCreatedDate()),
+                    () -> assertTrue(URL.getCreatedDate().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1)))
             );
         }
     }
@@ -89,22 +87,20 @@ class UrlTest {
         @Test
         @DisplayName("Should enable the URL")
         void shouldEnableUrl() {
-            Url url = Url.create(VALID_ID, VALID_LONG_URL, VALID_USER);
-            url.disable(); // Ensure it's disabled first
-            assertFalse(url.isActive());
+            URL.disable(); // Ensure it's disabled first
+            assertFalse(URL.isActive());
 
-            url.enable();
-            assertTrue(url.isActive());
+            URL.enable();
+            assertTrue(URL.isActive());
         }
 
         @Test
         @DisplayName("Should disable the URL")
         void shouldDisableUrl() {
-            Url url = Url.create(VALID_ID, VALID_LONG_URL, VALID_USER);
-            assertTrue(url.isActive());
+            assertTrue(URL.isActive());
 
-            url.disable();
-            assertFalse(url.isActive());
+            URL.disable();
+            assertFalse(URL.isActive());
         }
     }
 
@@ -115,11 +111,10 @@ class UrlTest {
         @Test
         @DisplayName("Should increment clicks correctly")
         void shouldIncrementClicksCorrectly() {
-            Url url = Url.create(VALID_ID, VALID_LONG_URL, VALID_USER);
-            int initialClicks = url.getClicks();
+            int initialClicks = URL.getClicks();
 
-            url.incrementClick();
-            assertEquals(initialClicks + 1, url.getClicks());
+            URL.incrementClick();
+            assertEquals(initialClicks + 1, URL.getClicks());
         }
     }
 

@@ -1,10 +1,8 @@
 package com.reginaldolribeiro.url_shortener.adapter.controller;
 
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.InvalidUrlException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlDisabledException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNotFoundException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNullableException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.exception.*;
 import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
+import com.reginaldolribeiro.url_shortener.app.exception.ShortUrlMalformedException;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -31,8 +29,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({InvalidUrlException.class, UrlNullableException.class})
-    public ResponseEntity<ErrorResponse> handleInvalidUrlException(InvalidUrlException ex) {
+    @ExceptionHandler({
+            InvalidUrlException.class,
+            UrlNullableException.class,
+            ShortUrlMalformedException.class
+    })
+    public ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -54,7 +56,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Validation failed", errors);
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Validation Failed", errors);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 

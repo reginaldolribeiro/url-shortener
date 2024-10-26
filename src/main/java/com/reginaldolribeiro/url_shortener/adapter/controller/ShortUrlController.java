@@ -5,6 +5,8 @@ import com.reginaldolribeiro.url_shortener.app.port.GetLongUrlPort;
 import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlInput;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +48,13 @@ public class ShortUrlController {
     }
 
     @GetMapping("{short_url}")
-    public ResponseEntity<?> getOriginalUrl(@PathVariable("short_url") @NotBlank String shortUrl){
+    public ResponseEntity<?> getOriginalUrl(
+            @PathVariable("short_url")
+            @NotBlank(message = "Short URL cannot be blank")
+            @Size(min = 7, max = 7, message = "Short URL must be exactly 7 characters long")
+            @Pattern(regexp = "^[0-9a-zA-Z]+$", message = "Short URL must be in Base62 format")
+            String shortUrl){
+
         var originalUrl = getLongUrlPort.execute(shortUrl);
         return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
                 .location(URI.create(originalUrl))
