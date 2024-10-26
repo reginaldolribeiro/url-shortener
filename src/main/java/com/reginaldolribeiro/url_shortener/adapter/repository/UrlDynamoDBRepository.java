@@ -1,6 +1,6 @@
 package com.reginaldolribeiro.url_shortener.adapter.repository;
 
-import com.reginaldolribeiro.url_shortener.adapter.helper.DateTimeUtil;
+import com.reginaldolribeiro.url_shortener.adapter.helper.DateTimeHelper;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
@@ -32,7 +32,7 @@ public class UrlDynamoDBRepository {
         Map<String, AttributeValue> item = new HashMap<>();
         item.put("shortUrlId", AttributeValue.builder().s(urlEntity.shortUrlId()).build());
         item.put("longUrl", AttributeValue.builder().s(urlEntity.longUrl()).build());
-        item.put("createdDate", AttributeValue.builder().s(DateTimeUtil.toString(urlEntity.createdDate())).build());
+        item.put("createdDate", AttributeValue.builder().s(DateTimeHelper.toString(urlEntity.createdDate())).build());
         item.put("userId", AttributeValue.builder().s(urlEntity.userId()).build());
         item.put("clicks", AttributeValue.builder().n(String.valueOf(urlEntity.clicks())).build());
         item.put("isActive", AttributeValue.builder().bool(urlEntity.isActive()).build());

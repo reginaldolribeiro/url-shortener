@@ -1,5 +1,6 @@
 package com.reginaldolribeiro.url_shortener.app.usecase;
 
+import com.reginaldolribeiro.url_shortener.app.exception.ShortUrlMalformedException;
 import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlDisabledException;
 import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
@@ -19,6 +20,9 @@ public class GetLongUrlUseCase implements GetLongUrlPort {
 
     @Override
     public String execute(String shortenedUrl) {
+        if(!isValidShortUrlCode(shortenedUrl))
+            throw new ShortUrlMalformedException("Short URL code must be in a valid format.");
+
         return urlCacheRepositoryPort
                 .findByUrlId(shortenedUrl)
                 .filter(Url::isActive)
@@ -36,6 +40,13 @@ public class GetLongUrlUseCase implements GetLongUrlPort {
                     return url.getLongUrl();
                 })
                 .orElseThrow(() -> new UrlNotFoundException("URL " + shortenedUrl + " not found."));
+    }
+
+    public boolean isValidShortUrlCode(String shortUrl) {
+        if(shortUrl == null || shortUrl.isBlank()) {
+            return false;
+        }
+        return shortUrl.length() == 7 && shortUrl.matches("^[0-9A-Za-z]+$");
     }
 
 //    @Override

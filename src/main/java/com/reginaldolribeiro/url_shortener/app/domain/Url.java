@@ -19,7 +19,6 @@ public class Url implements Serializable {
         if (longUrl == null || longUrl.isBlank())
             throw new IllegalArgumentException("longUrl cannot be null or empty.");
 
-//        return new Url(id, longUrl, LocalDateTime.now(Clock.systemUTC()), user, 0, true);
         return new Builder()
                 .id(id)
                 .longUrl(longUrl)
@@ -65,15 +64,6 @@ public class Url implements Serializable {
     public boolean isActive() {
         return isActive;
     }
-
-//    private Url(String id, String longUrl, LocalDateTime createdDate, User user, Integer clicks, boolean isActive){
-//        this.id = id;
-//        this.longUrl = longUrl;
-//        this.user = user;
-//        this.createdDate = createdDate;
-//        this.clicks = clicks;
-//        this.isActive = isActive;
-//    }
 
     // Private constructor for the builder
     private Url(Builder builder) {
