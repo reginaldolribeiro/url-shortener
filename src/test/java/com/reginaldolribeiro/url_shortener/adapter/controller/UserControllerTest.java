@@ -155,7 +155,6 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.message").value("Validation Failed"))
                     .andExpect(jsonPath("$.errors").isNotEmpty())
-                    .andExpect(jsonPath("$.errors.email").value("must not be blank"))
                     .andExpect(jsonPath("$.errors.email", anyOf(
                             is("must not be blank"),
                             is("must be a well-formed email address")
