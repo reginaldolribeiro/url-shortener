@@ -99,12 +99,7 @@ class UserControllerTest {
         @ValueSource(strings = {"    "}) // Test with white spaces
         @DisplayName("Should return Bad Request Error for null, empty and blank name")
         void shouldReturnBadRequestForInvalidInputName(String invalidName) throws Exception {
-            var requestJson = String.format("{\"name\": \"%s\", \"email\": \"valid.email@example.com\"}",
-                    invalidName == null ? "null" : invalidName);
-
-            if (invalidName == null) {
-                requestJson = "{\"name\": null, \"email\": \"valid.email@example.com\"}";
-            }
+            var requestJson = createUserJson(invalidName, "valid.email@example.com");
 
             mockMvc.perform(
                             MockMvcRequestBuilders
@@ -135,12 +130,7 @@ class UserControllerTest {
         @ValueSource(strings = {"    "}) // Test with white spaces
         @DisplayName("Should return Bad Request Error for null, empty and blank email")
         void shouldReturnBadRequestForNullOrEmptyOrBlankEmail(String invalidEmail) throws Exception {
-            var requestJson = String.format("{\"name\": \"User1\", \"email\": \"%s\"}",
-                    invalidEmail == null ? "null" : invalidEmail);
-
-            if (invalidEmail == null) {
-                requestJson = "{\"name\": \"User1\", \"email\": null}";
-            }
+            var requestJson = createUserJson("User1", invalidEmail);
 
             mockMvc.perform(
                             MockMvcRequestBuilders
@@ -187,8 +177,7 @@ class UserControllerTest {
         })
         @DisplayName("Should return Bad Request Error for null, empty and blank email")
         void shouldReturnBadRequestForInvalidEmail(String invalidEmail) throws Exception {
-            var requestJson = String.format("{\"name\": \"User1\", \"email\": \"%s\"}",
-                    invalidEmail == null ? "null" : invalidEmail);
+            var requestJson = createUserJson("User1", invalidEmail);
 
             mockMvc.perform(
                             MockMvcRequestBuilders
@@ -356,6 +345,19 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
         }
+    }
+
+    private String createUserJson(String name, String email) {
+        if (name == null && email == null) {
+            return "{\"name\": null, \"email\": null}";
+        }
+        if (name == null) {
+            return String.format("{\"name\": null, \"email\": \"%s\"}", email);
+        }
+        if (email == null) {
+            return String.format("{\"name\": \"%s\", \"email\": null}", name);
+        }
+        return String.format("{\"name\": \"%s\", \"email\": \"%s\"}", name, email);
     }
 
 }
