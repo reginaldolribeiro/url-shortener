@@ -1,6 +1,7 @@
 package com.reginaldolribeiro.url_shortener;
 
 import com.reginaldolribeiro.url_shortener.adapter.controller.user.UserResponse;
+import com.reginaldolribeiro.url_shortener.adapter.repository.user.UserEntity;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.usecase.user.CreateUserInput;
 import com.reginaldolribeiro.url_shortener.app.usecase.user.CreateUserOutput;
@@ -57,6 +58,17 @@ public class FixtureTests {
     public static UserResponse userResponse(){
         return new UserResponse(
                 UUID.randomUUID(),
+                DEFAULT_USER_NAME,
+                DEFAULT_USER_EMAIL,
+                LocalDateTime.now(Clock.systemUTC()),
+                LocalDateTime.now(Clock.systemUTC()),
+                true
+        );
+    }
+
+    public static UserEntity getUserEntity(){
+        return new UserEntity(
+                UUID.randomUUID().toString(),
                 DEFAULT_USER_NAME,
                 DEFAULT_USER_EMAIL,
                 LocalDateTime.now(Clock.systemUTC()),
