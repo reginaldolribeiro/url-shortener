@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.repository;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

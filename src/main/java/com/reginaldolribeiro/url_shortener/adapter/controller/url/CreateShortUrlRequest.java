@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.controller;
+package com.reginaldolribeiro.url_shortener.adapter.controller.url;
 
 import jakarta.validation.constraints.NotBlank;
 

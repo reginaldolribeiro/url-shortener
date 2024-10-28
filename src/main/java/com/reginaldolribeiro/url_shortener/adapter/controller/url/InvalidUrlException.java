@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.controller.exception;
+package com.reginaldolribeiro.url_shortener.adapter.controller.url;
 
 public class InvalidUrlException extends RuntimeException {
     public InvalidUrlException(){}

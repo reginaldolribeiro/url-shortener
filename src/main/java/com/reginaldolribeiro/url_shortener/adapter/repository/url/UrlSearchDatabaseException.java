@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.repository;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 public class UrlSearchDatabaseException extends RuntimeException {
     public UrlSearchDatabaseException(){}

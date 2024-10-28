@@ -2,8 +2,12 @@ package com.reginaldolribeiro.url_shortener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reginaldolribeiro.url_shortener.app.port.CreateShortUrlPort;
+import com.reginaldolribeiro.url_shortener.app.port.CreateUserPort;
 import com.reginaldolribeiro.url_shortener.app.port.GetLongUrlPort;
-import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlUseCase;
+import com.reginaldolribeiro.url_shortener.app.port.GetUserPort;
+import com.reginaldolribeiro.url_shortener.app.usecase.url.CreateShortUrlUseCase;
+import com.reginaldolribeiro.url_shortener.app.usecase.user.CreateUserUseCase;
+import com.reginaldolribeiro.url_shortener.app.usecase.user.GetUserUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +32,12 @@ public class ApplicationContextLoadTest {
     private GetLongUrlPort getLongUrlPort;
 
     @Autowired
+    private CreateUserPort createUserPort;
+
+    @Autowired
+    private GetUserPort getUserPort;
+
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
@@ -44,6 +54,8 @@ public class ApplicationContextLoadTest {
         // Basic context load assertions
         assertNotNull(createShortUrlPort);
         assertNotNull(getLongUrlPort);
+        assertNotNull(createUserPort);
+        assertNotNull(getUserPort);
         assertNotNull(redisTemplate);
         assertNotNull(redisCacheManager);
         assertNotNull(objectMapper);
@@ -78,6 +90,25 @@ public class ApplicationContextLoadTest {
         assertNotNull(bean, "createShortUrlPort should be initialized");
         assertTrue(bean instanceof CreateShortUrlPort, "Bean should be of type CreateShortUrlPort");
         assertTrue(bean instanceof CreateShortUrlUseCase, "Bean should be an instance of CreateShortUrlUseCase");
+    }
+
+    @Test
+    void createUserPortShouldBeConfiguredCorrectly() {
+        var bean = context.getBean("createUserPort");
+
+        // Verify that bean is not null and correct type
+        assertNotNull(bean, "createUserPort should be initialized");
+        assertTrue(bean instanceof CreateUserPort);
+        assertTrue(bean instanceof CreateUserUseCase);
+    }
+
+    @Test
+    void getUserPortShouldBeConfiguredCorrectly() {
+        var bean = context.getBean("getUserPort");
+
+        assertNotNull(bean);
+        assertTrue(bean instanceof GetUserPort);
+        assertTrue(bean instanceof GetUserUseCase);
     }
 
 }

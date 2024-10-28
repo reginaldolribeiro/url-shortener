@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.repository;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.port.UrlRepositoryPort;
@@ -20,11 +20,12 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
 
     @Override
     public void save(Url url) {
-        System.out.println("Saving URL to database ....");
+        log.info("Saving URL to database ....");
         var urlEntity = new UrlEntity(url.getId(),
                 url.getLongUrl(),
-                url.getCreatedDate(),
-                url.getUser().id().toString(),
+                url.getCreatedAt(),
+                url.getUpdatedAt(),
+                url.getUser().getId().toString(),
                 url.getClicks(),
                 url.isActive());
         urlDynamoDBRepository.save(urlEntity);

@@ -1,7 +1,5 @@
-package com.reginaldolribeiro.url_shortener.adapter.controller;
+package com.reginaldolribeiro.url_shortener.adapter.controller.url;
 
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.InvalidUrlException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNullableException;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.stereotype.Service;
 

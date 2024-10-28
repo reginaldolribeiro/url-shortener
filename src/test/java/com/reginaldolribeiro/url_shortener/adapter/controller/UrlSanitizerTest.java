@@ -1,7 +1,8 @@
 package com.reginaldolribeiro.url_shortener.adapter.controller;
 
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.InvalidUrlException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNullableException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.InvalidUrlException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlNullableException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlSanitizer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
