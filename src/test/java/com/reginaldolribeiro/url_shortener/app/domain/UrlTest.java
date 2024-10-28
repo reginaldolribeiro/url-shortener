@@ -31,18 +31,18 @@ class UrlTest {
                     () -> assertNotNull(URL),
                     () -> assertEquals(VALID_ID, URL.getId()),
                     () -> assertEquals(VALID_LONG_URL, URL.getLongUrl()),
-                    () -> assertEquals(VALID_USER.name(), URL.getUser().name()),
-                    () -> assertEquals(VALID_USER.email(), URL.getUser().email())
+                    () -> assertEquals(VALID_USER.getName(), URL.getUser().getName()),
+                    () -> assertEquals(VALID_USER.getEmail(), URL.getUser().getEmail())
             );
         }
 
         @Test
         @DisplayName("Should set created date correctly")
-        void shouldSetCreatedDateCorrectly() {
+        void shouldSetcreatedAtCorrectly() {
             assertAll(
                     () -> assertNotNull(URL),
-                    () -> assertNotNull(URL.getCreatedDate()),
-                    () -> assertTrue(URL.getCreatedDate().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1)))
+                    () -> assertNotNull(URL.getCreatedAt()),
+                    () -> assertTrue(URL.getCreatedAt().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1)))
             );
         }
     }

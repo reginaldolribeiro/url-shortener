@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 public class Url implements Serializable {
     private String id;
     private String longUrl;
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private User user;
     private Integer clicks;
     private boolean isActive;
@@ -22,7 +23,8 @@ public class Url implements Serializable {
         return new Builder()
                 .id(id)
                 .longUrl(longUrl)
-                .createdDate(LocalDateTime.now(Clock.systemUTC()))
+                .createdAt(LocalDateTime.now(Clock.systemUTC()))
+                .updatedAt(LocalDateTime.now(Clock.systemUTC()))
                 .user(user)
                 .clicks(0)
                 .isActive(true)
@@ -49,8 +51,12 @@ public class Url implements Serializable {
         return longUrl;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public User getUser() {
@@ -69,7 +75,8 @@ public class Url implements Serializable {
     private Url(Builder builder) {
         this.id = builder.id;
         this.longUrl = builder.longUrl;
-        this.createdDate = builder.createdDate;
+        this.createdAt = builder.createdAt;
+        this.updatedAt = builder.updatedAt;
         this.user = builder.user;
         this.clicks = builder.clicks;
         this.isActive = builder.isActive;
@@ -79,7 +86,8 @@ public class Url implements Serializable {
     public static class Builder {
         private String id;
         private String longUrl;
-        private LocalDateTime createdDate;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
         private User user;
         private Integer clicks;
         private boolean isActive;
@@ -94,8 +102,13 @@ public class Url implements Serializable {
             return this;
         }
 
-        public Builder createdDate(LocalDateTime createdDate) {
-            this.createdDate = createdDate;
+        public Builder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder updatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
             return this;
         }
 

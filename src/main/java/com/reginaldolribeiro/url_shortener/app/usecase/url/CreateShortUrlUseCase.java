@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.app.usecase;
+package com.reginaldolribeiro.url_shortener.app.usecase.url;
 
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
@@ -23,7 +23,7 @@ public class CreateShortUrlUseCase implements CreateShortUrlPort {
 
     @Override
     public CreateShortUrlOutput execute(CreateShortUrlInput input) {
-        var user = userRepositoryPort.get(input.userId())
+        var user = userRepositoryPort.findById(input.userId())
                 .orElseThrow(() -> new UserNotFoundException("User " + input.userId() + " not found."));
 
         var shortenedUrlId = idGeneratorPort.generate();
@@ -33,7 +33,7 @@ public class CreateShortUrlUseCase implements CreateShortUrlPort {
         urlCacheRepositoryPort.save(url);
 
         return new CreateShortUrlOutput(
-                url.getUser().id().toString(),
+                url.getUser().getId().toString(),
                 shortenedUrlId,
                 input.longUrl()
         );

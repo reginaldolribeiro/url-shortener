@@ -1,12 +1,13 @@
 package com.reginaldolribeiro.url_shortener.app.usecase;
 
 import com.reginaldolribeiro.url_shortener.FixtureTests;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlDisabledException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlDisabledException;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.ShortUrlMalformedException;
 import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UrlRepositoryPort;
+import com.reginaldolribeiro.url_shortener.app.usecase.url.GetLongUrlUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class GetLongUrlUseCaseTest {
 
     public static final String SHORTENED_URL = FixtureTests.SHORT_URL_CODE;
     private final User USER = FixtureTests.createUser();
-    private final String USER_ID = USER.id().toString();
+    private final String USER_ID = USER.getId().toString();
 
     @InjectMocks
     private GetLongUrlUseCase getLongUrlUseCase;

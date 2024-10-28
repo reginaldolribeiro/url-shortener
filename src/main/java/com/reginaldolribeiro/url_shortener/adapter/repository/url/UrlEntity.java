@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.repository;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
@@ -12,7 +12,8 @@ public record UrlEntity(
 
 //        @JsonSerialize(using = LocalDateSerializer.class)
 //        @JsonDeserialize(using = LocalDateDeserializer.class)
-        LocalDateTime createdDate,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
 
         String userId,
         int clicks,
@@ -21,14 +22,16 @@ public record UrlEntity(
 
     static Url fromMapping(String shortUrlId,
                            String longUrl,
-                           LocalDateTime createdDate,
+                           LocalDateTime createdAt,
+                           LocalDateTime updatedAt,
                            User user,
                            int clicks,
                            boolean isActive) {
         return new Url.Builder()
                 .id(shortUrlId)
                 .longUrl(longUrl)
-                .createdDate(createdDate)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .user(user)
                 .clicks(clicks)
                 .isActive(isActive)
@@ -36,8 +39,8 @@ public record UrlEntity(
     }
 
     // Make the fromMapping method package-private
-//    static Url fromMapping(String id, String longUrl, User user, LocalDateTime createdDate, Integer clicks, boolean isActive) {
-//        return new Url(id, longUrl, createdDate, user, clicks, isActive);
+//    static Url fromMapping(String id, String longUrl, User user, LocalDateTime createdAt, Integer clicks, boolean isActive) {
+//        return new Url(id, longUrl, createdAt, user, clicks, isActive);
 //    }
 
 
@@ -48,7 +51,7 @@ public record UrlEntity(
 //    private UrlEntity(String shortUrlId, String longUrl, String userId) {
 //        this.shortUrlId = shortUrlId;
 //        this.longUrl = longUrl;
-//        this.createdDate = LocalDateTime.now(Clock.systemUTC()).toString();
+//        this.createdAt = LocalDateTime.now(Clock.systemUTC()).toString();
 //        this.userId = userId;
 //        this.clicks = 0;
 //        this.isActive = true;

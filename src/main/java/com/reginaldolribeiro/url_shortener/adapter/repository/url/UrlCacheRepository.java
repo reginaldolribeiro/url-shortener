@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter.repository;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
@@ -27,8 +27,9 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
 
         var urlEntity = new UrlEntity(url.getId(),
                 url.getLongUrl(),
-                url.getCreatedDate(),
-                url.getUser().id().toString(),
+                url.getCreatedAt(),
+                url.getUpdatedAt(),
+                url.getUser().getId().toString(),
                 url.getClicks(),
                 url.isActive());
 
@@ -42,12 +43,13 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
         return urlRedisRepository
                 .findByUrlId(id)
                 .map(cachedValue -> {
-                    var user = userRepositoryPort.get("9b8a2db5-e50a-481f-9e9a-828c37e721c1")
+                    var user = userRepositoryPort.findById(cachedValue.userId())
                             .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.userId() + " not found."));
                     return UrlEntity.fromMapping(
                             cachedValue.shortUrlId(),
                             cachedValue.longUrl(),
-                            cachedValue.createdDate(),
+                            cachedValue.createdAt(),
+                            cachedValue.updatedAt(),
                             user,
                             cachedValue.clicks(),
                             cachedValue.isActive()

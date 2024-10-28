@@ -2,13 +2,16 @@ package com.reginaldolribeiro.url_shortener.adapter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reginaldolribeiro.url_shortener.FixtureTests;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.InvalidUrlException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNotFoundException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.InvalidUrlException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlNotFoundException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.CreateShortUrlRequest;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.ShortUrlController;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlSanitizer;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.port.CreateShortUrlPort;
 import com.reginaldolribeiro.url_shortener.app.port.GetLongUrlPort;
-import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlInput;
-import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlOutput;
+import com.reginaldolribeiro.url_shortener.app.usecase.url.CreateShortUrlInput;
+import com.reginaldolribeiro.url_shortener.app.usecase.url.CreateShortUrlOutput;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,8 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,7 +53,7 @@ class ShortUrlControllerTest {
 
     private static final String ORIGINAL_URL = FixtureTests.DEFAULT_LONG_URL;
     private static final User USER = FixtureTests.createUser();
-    private final String USER_ID = USER.id().toString();
+    private final String USER_ID = USER.getId().toString();
 
     @Nested
     @DisplayName("Valid createShortUrl Requests")

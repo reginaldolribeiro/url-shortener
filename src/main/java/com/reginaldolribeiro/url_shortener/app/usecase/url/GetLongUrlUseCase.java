@@ -1,8 +1,8 @@
-package com.reginaldolribeiro.url_shortener.app.usecase;
+package com.reginaldolribeiro.url_shortener.app.usecase.url;
 
 import com.reginaldolribeiro.url_shortener.app.exception.ShortUrlMalformedException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlDisabledException;
-import com.reginaldolribeiro.url_shortener.adapter.controller.exception.UrlNotFoundException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlDisabledException;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.port.GetLongUrlPort;
 import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;

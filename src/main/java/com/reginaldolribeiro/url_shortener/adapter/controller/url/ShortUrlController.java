@@ -1,8 +1,8 @@
-package com.reginaldolribeiro.url_shortener.adapter.controller;
+package com.reginaldolribeiro.url_shortener.adapter.controller.url;
 
 import com.reginaldolribeiro.url_shortener.app.port.CreateShortUrlPort;
 import com.reginaldolribeiro.url_shortener.app.port.GetLongUrlPort;
-import com.reginaldolribeiro.url_shortener.app.usecase.CreateShortUrlInput;
+import com.reginaldolribeiro.url_shortener.app.usecase.url.CreateShortUrlInput;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
