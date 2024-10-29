@@ -26,7 +26,7 @@ public class FixtureTests {
     }
 
     public static Url createSampleUrl(){
-        return Url.create(generateSampleUserId(), DEFAULT_LONG_URL, createSampleUser());
+        return Url.create(SHORT_URL_CODE, DEFAULT_LONG_URL, createSampleUser());
     }
 
     public static UrlEntity createSampleUrlEntity() {
