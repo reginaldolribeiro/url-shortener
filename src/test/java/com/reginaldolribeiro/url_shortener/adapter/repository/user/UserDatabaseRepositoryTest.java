@@ -29,8 +29,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserDatabaseRepositoryTest {
 
-    public static final User USER = FixtureTests.createUser();
-    public static final String USER_ID = FixtureTests.generateUserId();
+    public static final User USER = FixtureTests.createSampleUser();
+    public static final String USER_ID = FixtureTests.generateSampleUserId();
 
     @InjectMocks
     private UserDatabaseRepository userDatabaseRepository;

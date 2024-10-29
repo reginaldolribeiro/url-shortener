@@ -26,7 +26,7 @@ class UserTest {
         @Test
         @DisplayName("Should create a User with valid parameters")
         void shouldCreateAnUserWithValidParameters() {
-            var user = FixtureTests.createUser();
+            var user = FixtureTests.createSampleUser();
             assertAll(
                     () -> assertNotNull(user),
                     () -> assertNotNull(user.getId()),
