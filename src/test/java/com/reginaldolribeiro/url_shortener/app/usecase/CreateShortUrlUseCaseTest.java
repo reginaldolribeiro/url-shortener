@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CreateShortUrlUseCaseTest {
 
-    private final User USER = FixtureTests.createUser();
+    private final User USER = FixtureTests.createSampleUser();
     private final String USER_ID = USER.getId().toString();
 
     @InjectMocks
@@ -88,7 +88,7 @@ class CreateShortUrlUseCaseTest {
         @DisplayName("Should return different Shortened URLs for the same Long URL with different user IDs")
         void shouldReturnDifferentShortenedUrlsForSameLongUrlAndDifferentUserIds() {
             var user1 = USER;
-            var user2 = FixtureTests.createUser("User2", "user2@user.com");
+            var user2 = FixtureTests.createSampleUser("User2", "user2@user.com");
             var expectedShortUrl1 = "xUk340p";
             var expectedShortUrl2 = "aBcD123";
             var userId1 = user1.getId().toString();

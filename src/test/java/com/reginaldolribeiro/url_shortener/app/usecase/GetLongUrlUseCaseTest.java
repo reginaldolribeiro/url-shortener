@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class GetLongUrlUseCaseTest {
 
     public static final String SHORTENED_URL = FixtureTests.SHORT_URL_CODE;
-    private final User USER = FixtureTests.createUser();
+    private final User USER = FixtureTests.createSampleUser();
     private final String USER_ID = USER.getId().toString();
 
     @InjectMocks

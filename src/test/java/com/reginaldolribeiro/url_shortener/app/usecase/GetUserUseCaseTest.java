@@ -37,7 +37,7 @@ class GetUserUseCaseTest {
         @Test
         @DisplayName("Should return user when ID is found in repository")
         void shouldReturnUserWhenIdIsFound() {
-            var user = FixtureTests.createUser();
+            var user = FixtureTests.createSampleUser();
 
             when(userRepositoryPort.findById(user.getId().toString())).thenReturn(Optional.of(user));
 

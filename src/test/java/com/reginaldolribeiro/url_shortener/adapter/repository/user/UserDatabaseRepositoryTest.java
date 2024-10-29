@@ -2,6 +2,7 @@ package com.reginaldolribeiro.url_shortener.adapter.repository.user;
 
 import com.reginaldolribeiro.url_shortener.FixtureTests;
 import com.reginaldolribeiro.url_shortener.adapter.helper.DateTimeHelper;
+import com.reginaldolribeiro.url_shortener.app.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,16 +27,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserDynamoDBRepositoryTest {
+class UserDatabaseRepositoryTest {
 
-    public static final UserEntity USER_ENTITY = FixtureTests.getUserEntity();
-    private static final String USER_ID = FixtureTests.generateUserId();
+    public static final User USER = FixtureTests.createSampleUser();
+    public static final String USER_ID = FixtureTests.generateSampleUserId();
+
+    @InjectMocks
+    private UserDatabaseRepository userDatabaseRepository;
 
     @Mock
     private DynamoDbClient dynamoDbClient;
-
-    @InjectMocks
-    private UserDynamoDBRepository userDynamoDBRepository;
 
     @Nested
     @DisplayName("save method")
@@ -48,7 +49,7 @@ class UserDynamoDBRepositoryTest {
 
             when(dynamoDbClient.putItem(any(PutItemRequest.class))).thenReturn(putItemResponse);
 
-            assertDoesNotThrow(() -> userDynamoDBRepository.save(USER_ENTITY));
+            assertDoesNotThrow(() -> userDatabaseRepository.save(USER));
             verify(dynamoDbClient, times(1)).putItem(any(PutItemRequest.class));
         }
 
@@ -59,10 +60,10 @@ class UserDynamoDBRepositoryTest {
                     .thenThrow(DynamoDbException.builder().message("DynamoDB error").build());
 
             var exception = assertThrows(UserSaveDatabaseException.class, () -> {
-                userDynamoDBRepository.save(USER_ENTITY);
+                userDatabaseRepository.save(USER);
             });
 
-            assertEquals("Failed to save user with ID: " + USER_ENTITY.id(), exception.getMessage());
+            assertEquals("Failed to save user with ID: " + USER.getId(), exception.getMessage());
 
             verify(dynamoDbClient, times(1)).putItem(any(PutItemRequest.class));
         }
@@ -90,7 +91,7 @@ class UserDynamoDBRepositoryTest {
 
             when(dynamoDbClient.query(any(QueryRequest.class))).thenReturn(queryResponse);
 
-            var result = userDynamoDBRepository.findById(USER_ID);
+            var result = userDatabaseRepository.findById(USER_ID);
 
             assertTrue(result.isPresent());
             assertNotNull(result.get().getId());
@@ -114,7 +115,7 @@ class UserDynamoDBRepositoryTest {
 
             when(dynamoDbClient.query(any(QueryRequest.class))).thenReturn(queryResponse);
 
-            var result = userDynamoDBRepository.findById(UserDynamoDBRepositoryTest.USER_ID);
+            var result = userDatabaseRepository.findById(USER_ID);
 
             assertFalse(result.isPresent());
 
@@ -128,7 +129,7 @@ class UserDynamoDBRepositoryTest {
                     .thenThrow(DynamoDbException.builder().message("DynamoDB error").build());
 
             var exception = assertThrows(UserSearchDatabaseException.class, () -> {
-                userDynamoDBRepository.findById(UserDynamoDBRepositoryTest.USER_ID);
+                userDatabaseRepository.findById(USER_ID);
             });
 
             assertEquals("Failed to search user with ID: " + USER_ID, exception.getMessage());
@@ -151,11 +152,12 @@ class UserDynamoDBRepositoryTest {
 
             when(dynamoDbClient.query(any(QueryRequest.class))).thenReturn(queryResponse);
 
-            var result = userDynamoDBRepository.findById(userId);
+            var result = userDatabaseRepository.findById(userId);
 
             assertFalse(result.isPresent());
 
             verify(dynamoDbClient, times(1)).query(any(QueryRequest.class));
         }
     }
+
 }

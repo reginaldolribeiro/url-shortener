@@ -52,7 +52,7 @@ class ShortUrlControllerTest {
     private CreateShortUrlPort createShortUrlPort;
 
     private static final String ORIGINAL_URL = FixtureTests.DEFAULT_LONG_URL;
-    private static final User USER = FixtureTests.createUser();
+    private static final User USER = FixtureTests.createSampleUser();
     private final String USER_ID = USER.getId().toString();
 
     @Nested

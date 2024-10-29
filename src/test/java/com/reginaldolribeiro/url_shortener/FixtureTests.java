@@ -1,6 +1,8 @@
 package com.reginaldolribeiro.url_shortener;
 
 import com.reginaldolribeiro.url_shortener.adapter.controller.user.UserResponse;
+import com.reginaldolribeiro.url_shortener.adapter.repository.url.UrlEntity;
+import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.adapter.repository.user.UserEntity;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.usecase.user.CreateUserInput;
@@ -19,23 +21,51 @@ public class FixtureTests {
     public static final String DEFAULT_USER_NAME = "User1";
     public static final String DEFAULT_USER_EMAIL = "user@user.com";
 
-    public static String generateUserId() {
+    public static String generateSampleUserId() {
         return UUID.randomUUID().toString();
     }
 
-    public static User createUser(){
+    public static Url createSampleUrl(){
+        return Url.create(generateSampleUserId(), DEFAULT_LONG_URL, createSampleUser());
+    }
+
+    public static UrlEntity createSampleUrlEntity() {
+        return new UrlEntity(
+                SHORT_URL_CODE,
+                DEFAULT_LONG_URL,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                UUID.randomUUID().toString(),
+                0,
+                true
+        );
+    }
+
+    public static UrlEntity createSampleUrlEntity(String shortUrl) {
+        return new UrlEntity(
+                shortUrl,
+                DEFAULT_LONG_URL,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                UUID.randomUUID().toString(),
+                0,
+                true
+        );
+    }
+
+    public static User createSampleUser(){
         return User.create(DEFAULT_USER_NAME, DEFAULT_USER_EMAIL);
     }
 
-    public static User createUser(String name, String email){
+    public static User createSampleUser(String name, String email){
         return User.create(name, email);
     }
 
-    public static CreateUserInput createUserInput(){
+    public static CreateUserInput createSampleUserInput(){
         return new CreateUserInput(DEFAULT_USER_NAME, DEFAULT_USER_EMAIL);
     }
 
-    public static CreateUserOutput createUserOutput(){
+    public static CreateUserOutput createSampleUserOutput(){
         return new CreateUserOutput(UUID.randomUUID(),
                 DEFAULT_USER_NAME,
                 DEFAULT_USER_EMAIL,
@@ -44,7 +74,7 @@ public class FixtureTests {
                 true);
     }
 
-    public static UserResponse userResponse(UUID id){
+    public static UserResponse userSampleResponse(UUID id){
         return new UserResponse(
                 id,
                 DEFAULT_USER_NAME,
@@ -55,7 +85,7 @@ public class FixtureTests {
         );
     }
 
-    public static UserResponse userResponse(){
+    public static UserResponse userSampleResponse(){
         return new UserResponse(
                 UUID.randomUUID(),
                 DEFAULT_USER_NAME,

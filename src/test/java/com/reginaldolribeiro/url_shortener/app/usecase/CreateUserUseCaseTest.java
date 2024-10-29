@@ -39,7 +39,7 @@ class CreateUserUseCaseTest {
         @Test
         @DisplayName("Should save user successfully with valid input")
         void shouldSaveUser() {
-            var userInput = FixtureTests.createUserInput();
+            var userInput = FixtureTests.createSampleUserInput();
             var expectedUser = User.create(userInput.name(), userInput.email());
 
             doNothing().when(userRepositoryPort).save(any(User.class));
@@ -89,7 +89,7 @@ class CreateUserUseCaseTest {
         @Test
         @DisplayName("Should throw exception when repository.save fails")
         void shouldThrowExceptionWhenRepositorySaveFails() {
-            var userInput = FixtureTests.createUserInput();
+            var userInput = FixtureTests.createSampleUserInput();
 
             doThrow(new RuntimeException("Database error")).when(userRepositoryPort).save(any(User.class));
 

@@ -17,7 +17,7 @@ class UrlTest {
 
     private static final String VALID_ID = "2cnbJVQ";
     private static final String VALID_LONG_URL = "https://example.com/very-long-url8";
-    private static final User VALID_USER = FixtureTests.createUser();
+    private static final User VALID_USER = FixtureTests.createSampleUser();
     private static final Url URL = Url.create(VALID_ID, VALID_LONG_URL, VALID_USER);
 
     @Nested
