@@ -95,4 +95,15 @@ public class FixtureTests {
         );
     }
 
+    public static UserEntity getUserEntity(){
+        return new UserEntity(
+                UUID.randomUUID().toString(),
+                DEFAULT_USER_NAME,
+                DEFAULT_USER_EMAIL,
+                LocalDateTime.now(Clock.systemUTC()),
+                LocalDateTime.now(Clock.systemUTC()),
+                true
+        );
+    }
+
 }
