@@ -1,10 +1,15 @@
 package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
+import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
+import io.lettuce.core.RedisCommandTimeoutException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,48 +18,86 @@ import java.util.Optional;
 @Service
 public class UrlCacheRepository implements UrlCacheRepositoryPort {
 
-    private final UrlRedisRepository urlRedisRepository;
+    private final ObjectMapper objectMapper;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final UserRepositoryPort userRepositoryPort;
 
-    public UrlCacheRepository(UrlRedisRepository urlRedisRepository, UserRepositoryPort userRepositoryPort) {
-        this.urlRedisRepository = urlRedisRepository;
+    public UrlCacheRepository(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate, UserRepositoryPort userRepositoryPort) {
+        this.objectMapper = objectMapper;
+        this.redisTemplate = redisTemplate;
         this.userRepositoryPort = userRepositoryPort;
     }
 
     @Override
     public void save(Url url) {
         log.info("Saving URL {} to cache ...", url.getId());
-
-        var urlEntity = new UrlEntity(url.getId(),
-                url.getLongUrl(),
-                url.getCreatedAt(),
-                url.getUpdatedAt(),
-                url.getUser().getId().toString(),
-                url.getClicks(),
-                url.isActive());
-
-        urlRedisRepository.save(urlEntity);
+        var urlEntity = mapToEntity(url);
+        var cacheKey = "urlCache::" + urlEntity.shortUrlId();
+        try {
+            redisTemplate.opsForValue().set(cacheKey, urlEntity);
+        } catch (RedisConnectionFailureException | RedisCommandTimeoutException e) {
+            log.warn("Redis connection issue while saving URL {}: {}", urlEntity.shortUrlId(), e.getMessage());
+            // Optionally retry or fallback
+        } catch (IllegalArgumentException e) {
+            log.error("Serialization error for URL {}: {}", urlEntity.shortUrlId(), e.getMessage());
+            // Handle serialization issues
+        } catch (Exception e) {
+            log.error("Unexpected error while saving URL to cache", e);
+        }
     }
 
     @Override
     public Optional<Url> findByUrlId(String id) {
         log.info("Searching for URL {} in cache ...", id);
+        try {
+            var cachedValue = objectMapper.convertValue(
+                    redisTemplate.opsForValue().get("urlCache::" + id),
+                    UrlEntity.class
+            );
 
-        return urlRedisRepository
-                .findByUrlId(id)
-                .map(cachedValue -> {
-                    var user = userRepositoryPort.findById(cachedValue.userId())
-                            .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.userId() + " not found."));
-                    return UrlEntity.fromMapping(
-                            cachedValue.shortUrlId(),
-                            cachedValue.longUrl(),
-                            cachedValue.createdAt(),
-                            cachedValue.updatedAt(),
-                            user,
-                            cachedValue.clicks(),
-                            cachedValue.isActive()
-                    );
-                });
+            if (cachedValue == null) {
+                return Optional.empty();
+            }
+
+            var user = userRepositoryPort.findById(cachedValue.userId())
+                    .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.userId() + " not found."));
+
+            return Optional.of(mapToDomain(cachedValue, user));
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to convert cached value to UrlEntity for ID {}: {}", id, e.getMessage());
+        } catch (RedisConnectionFailureException e) {
+            log.warn("Failed to retrieve URL from cache for ID {}: {}", id, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error while retrieving URL from cache for ID {}", id, e);
+        }
+
+        return Optional.empty();
+    }
+
+    // Mapping methods
+    private UrlEntity mapToEntity(Url url) {
+        return new UrlEntity(
+                url.getId(),
+                url.getLongUrl(),
+                url.getCreatedAt(),
+                url.getUpdatedAt(),
+                url.getUser().getId().toString(),
+                url.getClicks(),
+                url.isActive()
+        );
+    }
+
+    private Url mapToDomain(UrlEntity entity, User user) {
+        return UrlEntity.fromMapping(
+                entity.shortUrlId(),
+                entity.longUrl(),
+                entity.createdAt(),
+                entity.updatedAt(),
+                user,
+                entity.clicks(),
+                entity.isActive()
+        );
     }
 
 }

@@ -107,4 +107,8 @@ public class FixtureTests {
         );
     }
 
+    public static String getCacheKey(String key) {
+        return "urlCache::" + key;
+    }
+
 }

@@ -151,6 +151,18 @@
 							<excludes>
 								<exclude>com/reginaldolribeiro/url_shortener/app/exception/**</exclude>
 							</excludes>
+							<rules>
+								<rule>
+									<element>PACKAGE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.90</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
 						</configuration>
 					</execution>
 				</executions>
