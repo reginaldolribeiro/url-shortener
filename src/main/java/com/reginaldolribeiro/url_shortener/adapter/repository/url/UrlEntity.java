@@ -2,31 +2,72 @@ package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public record UrlEntity(
-        String shortUrlId,
-        String longUrl,
+@DynamoDbBean
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+public class UrlEntity implements Serializable {
 
-//        @JsonSerialize(using = LocalDateSerializer.class)
-//        @JsonDeserialize(using = LocalDateDeserializer.class)
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt,
+    private String shortUrlId;
+    private String longUrl;
 
-        String userId,
-        int clicks,
-        boolean isActive
-) implements Serializable {
+//    @JsonSerialize(using = LocalDateSerializer.class)
+//    @JsonDeserialize(using = LocalDateDeserializer.class)
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    static Url fromMapping(String shortUrlId,
-                           String longUrl,
-                           LocalDateTime createdAt,
-                           LocalDateTime updatedAt,
-                           User user,
-                           int clicks,
-                           boolean isActive) {
+    private String userId;
+    private int clicks;
+    private boolean isActive;
+
+    @DynamoDbPartitionKey
+    public String getShortUrlId() {
+        return shortUrlId;
+    }
+
+    @DynamoDbSortKey
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getLongUrl() {
+        return longUrl;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public int getClicks() {
+        return clicks;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+
+    public static Url fromMapping(String shortUrlId,
+                                  String longUrl,
+                                  LocalDateTime createdAt,
+                                  LocalDateTime updatedAt,
+                                  User user,
+                                  int clicks,
+                                  boolean isActive) {
         return new Url.Builder()
                 .id(shortUrlId)
                 .longUrl(longUrl)
@@ -38,22 +79,4 @@ public record UrlEntity(
                 .build();
     }
 
-    // Make the fromMapping method package-private
-//    static Url fromMapping(String id, String longUrl, User user, LocalDateTime createdAt, Integer clicks, boolean isActive) {
-//        return new Url(id, longUrl, createdAt, user, clicks, isActive);
-//    }
-
-
-//    public static UrlEntity create(String shortUrlId, String longUrl, String userId){
-//        return new UrlEntity(shortUrlId, longUrl, userId);
-//    }
-//
-//    private UrlEntity(String shortUrlId, String longUrl, String userId) {
-//        this.shortUrlId = shortUrlId;
-//        this.longUrl = longUrl;
-//        this.createdAt = LocalDateTime.now(Clock.systemUTC()).toString();
-//        this.userId = userId;
-//        this.clicks = 0;
-//        this.isActive = true;
-//    }
 }

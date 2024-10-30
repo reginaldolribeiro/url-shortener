@@ -137,23 +137,23 @@ class UrlCacheRepositoryTest {
             when(objectMapper.convertValue(any(), eq(UrlEntity.class))).thenReturn(URL_ENTITY);
             when(userRepositoryPort.findById(URL.getUser().getId().toString())).thenReturn(Optional.of(user));
 
-            var result = urlCacheRepository.findByUrlId(URL_ENTITY.shortUrlId());
+            var result = urlCacheRepository.findByUrlId(URL_ENTITY.getShortUrlId());
 
             assertTrue(result.isPresent());
             var returnedUrl = result.get();
 
             assertAll(
-                    () -> assertEquals(URL_ENTITY.shortUrlId(), returnedUrl.getId()),
-                    () -> assertEquals(URL_ENTITY.longUrl(), returnedUrl.getLongUrl()),
-                    () -> assertTrue(URL_ENTITY.createdAt().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1))),
-                    () -> assertTrue(URL_ENTITY.updatedAt().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1))),
+                    () -> assertEquals(URL_ENTITY.getShortUrlId(), returnedUrl.getId()),
+                    () -> assertEquals(URL_ENTITY.getLongUrl(), returnedUrl.getLongUrl()),
+                    () -> assertTrue(URL_ENTITY.getCreatedAt().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1))),
+                    () -> assertTrue(URL_ENTITY.getUpdatedAt().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1))),
                     () -> assertEquals(user, returnedUrl.getUser()),
-                    () -> assertEquals(URL_ENTITY.clicks(), returnedUrl.getClicks()),
+                    () -> assertEquals(URL_ENTITY.getClicks(), returnedUrl.getClicks()),
                     () -> assertTrue(returnedUrl.isActive())
             );
 
-            verify(redisTemplate.opsForValue(), times(1)).get(FixtureTests.getCacheKey(URL_ENTITY.shortUrlId()));
-            verify(userRepositoryPort, times(1)).findById(URL_ENTITY.userId());
+            verify(redisTemplate.opsForValue(), times(1)).get(FixtureTests.getCacheKey(URL_ENTITY.getShortUrlId()));
+            verify(userRepositoryPort, times(1)).findById(URL_ENTITY.getUserId());
         }
 
         @Test
@@ -163,12 +163,12 @@ class UrlCacheRepositoryTest {
             when(objectMapper.convertValue(any(), eq(UrlEntity.class))).thenReturn(URL_ENTITY);
             when(userRepositoryPort.findById(anyString())).thenReturn(Optional.empty());
 
-            var result = assertDoesNotThrow(() -> urlCacheRepository.findByUrlId(URL_ENTITY.shortUrlId()));
+            var result = assertDoesNotThrow(() -> urlCacheRepository.findByUrlId(URL_ENTITY.getShortUrlId()));
 
             assertTrue(result.isEmpty());
 
-            verify(redisTemplate.opsForValue(), times(1)).get(FixtureTests.getCacheKey(URL_ENTITY.shortUrlId()));
-            verify(userRepositoryPort, times(1)).findById(URL_ENTITY.userId());
+            verify(redisTemplate.opsForValue(), times(1)).get(FixtureTests.getCacheKey(URL_ENTITY.getShortUrlId()));
+            verify(userRepositoryPort, times(1)).findById(URL_ENTITY.getUserId());
         }
 
         @ParameterizedTest

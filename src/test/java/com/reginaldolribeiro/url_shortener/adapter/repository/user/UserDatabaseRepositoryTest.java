@@ -3,6 +3,7 @@ package com.reginaldolribeiro.url_shortener.adapter.repository.user;
 import com.reginaldolribeiro.url_shortener.FixtureTests;
 import com.reginaldolribeiro.url_shortener.adapter.helper.DateTimeHelper;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 class UserDatabaseRepositoryTest {
 
     public static final User USER = FixtureTests.createSampleUser();

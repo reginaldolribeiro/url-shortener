@@ -32,14 +32,14 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
     public void save(Url url) {
         log.info("Saving URL {} to cache ...", url.getId());
         var urlEntity = mapToEntity(url);
-        var cacheKey = "urlCache::" + urlEntity.shortUrlId();
+        var cacheKey = "urlCache::" + urlEntity.getShortUrlId();
         try {
             redisTemplate.opsForValue().set(cacheKey, urlEntity);
         } catch (RedisConnectionFailureException | RedisCommandTimeoutException e) {
-            log.warn("Redis connection issue while saving URL {}: {}", urlEntity.shortUrlId(), e.getMessage());
+            log.warn("Redis connection issue while saving URL {}: {}", urlEntity.getShortUrlId(), e.getMessage());
             // Optionally retry or fallback
         } catch (IllegalArgumentException e) {
-            log.error("Serialization error for URL {}: {}", urlEntity.shortUrlId(), e.getMessage());
+            log.error("Serialization error for URL {}: {}", urlEntity.getShortUrlId(), e.getMessage());
             // Handle serialization issues
         } catch (Exception e) {
             log.error("Unexpected error while saving URL to cache", e);
@@ -59,8 +59,8 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
                 return Optional.empty();
             }
 
-            var user = userRepositoryPort.findById(cachedValue.userId())
-                    .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.userId() + " not found."));
+            var user = userRepositoryPort.findById(cachedValue.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.getUserId() + " not found."));
 
             return Optional.of(mapToDomain(cachedValue, user));
 
@@ -90,12 +90,12 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
 
     private Url mapToDomain(UrlEntity entity, User user) {
         return UrlEntity.fromMapping(
-                entity.shortUrlId(),
-                entity.longUrl(),
-                entity.createdAt(),
-                entity.updatedAt(),
+                entity.getShortUrlId(),
+                entity.getLongUrl(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
                 user,
-                entity.clicks(),
+                entity.getClicks(),
                 entity.isActive()
         );
     }
