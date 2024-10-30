@@ -1,9 +1,11 @@
 package com.reginaldolribeiro.url_shortener;
 
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.CreateShortUrlRequest;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.CreateShortUrlResponse;
 import com.reginaldolribeiro.url_shortener.adapter.controller.user.UserResponse;
 import com.reginaldolribeiro.url_shortener.adapter.repository.url.UrlEntity;
-import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.adapter.repository.user.UserEntity;
+import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.usecase.user.CreateUserInput;
 import com.reginaldolribeiro.url_shortener.app.usecase.user.CreateUserOutput;
@@ -74,7 +76,7 @@ public class FixtureTests {
                 true);
     }
 
-    public static UserResponse userSampleResponse(UUID id){
+    public static UserResponse sampleActiveUserResponse(UUID id){
         return new UserResponse(
                 id,
                 DEFAULT_USER_NAME,
@@ -85,7 +87,7 @@ public class FixtureTests {
         );
     }
 
-    public static UserResponse userSampleResponse(){
+    public static UserResponse sampleActiveUserResponse(){
         return new UserResponse(
                 UUID.randomUUID(),
                 DEFAULT_USER_NAME,
@@ -93,6 +95,17 @@ public class FixtureTests {
                 LocalDateTime.now(Clock.systemUTC()),
                 LocalDateTime.now(Clock.systemUTC()),
                 true
+        );
+    }
+
+    public static UserResponse sampleInactiveUserResponse(){
+        return new UserResponse(
+                UUID.randomUUID(),
+                DEFAULT_USER_NAME,
+                DEFAULT_USER_EMAIL,
+                LocalDateTime.now(Clock.systemUTC()),
+                LocalDateTime.now(Clock.systemUTC()),
+                false
         );
     }
 
@@ -109,6 +122,20 @@ public class FixtureTests {
 
     public static String getCacheKey(String key) {
         return "urlCache::" + key;
+    }
+
+    public static CreateShortUrlRequest sampleCreateShortUrlRequest(){
+        return new CreateShortUrlRequest(
+                "123e4567-e89b-12d3-a456-426614174000",
+                DEFAULT_LONG_URL
+        );
+    }
+
+    public static CreateShortUrlResponse sampleCreateShortUrlResponse(){
+        return new CreateShortUrlResponse(
+                DEFAULT_LONG_URL,
+                "https://short.url/abc123"
+        );
     }
 
 }

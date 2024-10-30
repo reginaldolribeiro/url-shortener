@@ -1,6 +1,10 @@
 package com.reginaldolribeiro.url_shortener;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.reginaldolribeiro.url_shortener.app.port.CreateShortUrlPort;
 import com.reginaldolribeiro.url_shortener.app.port.CreateUserPort;
 import com.reginaldolribeiro.url_shortener.app.port.GetLongUrlPort;
@@ -16,8 +20,9 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ApplicationContextLoadTest {
@@ -64,9 +69,14 @@ public class ApplicationContextLoadTest {
 
     @Test
     void validateObjectMapperConfiguration() {
-        assertTrue(
-                objectMapper.getRegisteredModuleIds().contains("jackson-datatype-jsr310"),
-                "JavaTimeModule should be registered with ObjectMapper"
+        Set<Object> moduleIds = objectMapper.getRegisteredModuleIds();
+        assertAll(
+                () -> assertTrue(moduleIds.contains("com.fasterxml.jackson.datatype.jdk8.Jdk8Module")),
+                () -> assertTrue(moduleIds.contains("jackson-datatype-jsr310")),
+                () -> assertFalse(objectMapper.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)),
+                () -> assertFalse(objectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)),
+                () -> assertEquals(PropertyNamingStrategies.SNAKE_CASE, objectMapper.getPropertyNamingStrategy()),
+                () -> assertTrue(objectMapper.getDateFormat() instanceof StdDateFormat, "default DateFormat used by Jackson’s ObjectMapper")
         );
     }
 
