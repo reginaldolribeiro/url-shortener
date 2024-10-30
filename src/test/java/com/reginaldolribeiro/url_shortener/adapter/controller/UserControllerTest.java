@@ -245,7 +245,7 @@ class UserControllerTest {
         @DisplayName("Should return user details for a valid UUID")
         void shouldReturnUserForValidUuid() throws Exception {
             var userId = UUID.randomUUID();
-            var response = FixtureTests.userSampleResponse(userId);
+            var response = FixtureTests.sampleActiveUserResponse(userId);
             var user = FixtureTests.createSampleUser();
 
             when(getUserPort.findById(userId)).thenReturn(user);
