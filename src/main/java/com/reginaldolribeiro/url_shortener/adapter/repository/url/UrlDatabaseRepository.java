@@ -1,21 +1,19 @@
 package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
-import com.reginaldolribeiro.url_shortener.adapter.helper.DateTimeHelper;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
+import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.UrlRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -24,44 +22,30 @@ import java.util.Optional;
 public class UrlDatabaseRepository implements UrlRepositoryPort {
 
     public static final String URL_MAPPINGS = "UrlMappings";
-    private final DynamoDbClient dynamoDbClient;
+
     private final UserRepositoryPort userRepositoryPort;
+    private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
+    private final DynamoDbTable<UrlEntity> urlTable;
 
-    public UrlDatabaseRepository(DynamoDbClient dynamoDbClient, UserRepositoryPort userRepositoryPort) {
-        this.dynamoDbClient = dynamoDbClient;
+    public UrlDatabaseRepository(UserRepositoryPort userRepositoryPort, DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         this.userRepositoryPort = userRepositoryPort;
+        this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
+        this.urlTable = dynamoDbEnhancedClient.table(URL_MAPPINGS, TableSchema.fromBean(UrlEntity.class));
     }
-
 
     @Override
     public void save(Url url) {
         log.info("Saving URL to database ....");
-        var urlEntity = new UrlEntity(url.getId(),
-                url.getLongUrl(),
-                url.getCreatedAt(),
-                url.getUpdatedAt(),
-                url.getUser().getId().toString(),
-                url.getClicks(),
-                url.isActive());
+        if (url == null) {
+            throw new IllegalArgumentException("Url cannot be null.");
+        }
+
+        var urlEntity = UrlMapper.toEntity(url);
         try {
-            Map<String, AttributeValue> item = new HashMap<>();
-            item.put("shortUrlId", AttributeValue.builder().s(urlEntity.shortUrlId()).build());
-            item.put("longUrl", AttributeValue.builder().s(urlEntity.longUrl()).build());
-            item.put("createdAt", AttributeValue.builder().s(DateTimeHelper.toString(urlEntity.createdAt())).build());
-            item.put("updatedAt", AttributeValue.builder().s(DateTimeHelper.toString(urlEntity.updatedAt())).build());
-            item.put("userId", AttributeValue.builder().s(urlEntity.userId()).build());
-            item.put("clicks", AttributeValue.builder().n(String.valueOf(urlEntity.clicks())).build());
-            item.put("isActive", AttributeValue.builder().bool(urlEntity.isActive()).build());
-
-            PutItemRequest request = PutItemRequest.builder()
-                    .tableName(URL_MAPPINGS)
-                    .item(item)
-                    .build();
-
-            dynamoDbClient.putItem(request);
+            urlTable.putItem(urlEntity);
         } catch (DynamoDbException e) {
-            log.error("Error saving URL with ID: {}", urlEntity.shortUrlId(), e);
-            throw new UrlSaveDatabaseException("Failed to save URL with ID: " + urlEntity.shortUrlId(), e);
+            log.error("Error saving URL with ID: {}", urlEntity.getShortUrlId(), e);
+            throw new UrlSaveDatabaseException("Failed to save URL with ID: " + urlEntity.getShortUrlId(), e);
         }
     }
 
@@ -69,56 +53,28 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
 //    @Cacheable(value = "urlCache", key = "'urlCache::' + #shortenedUrl")
     public Optional<Url> findByShortenedUrl(String shortenedUrl) {
         log.info("Searching for {} in the database", shortenedUrl);
-        var partitionKey = "shortUrlId";
-        var partitionKeyRequest = ":shortUrlId";
-        var sortKey = "userId";
+        if(shortenedUrl == null || shortenedUrl.isBlank())
+            throw new IllegalArgumentException("Url cannot be null.");
 
         try {
-            Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-            expressionAttributeValues.put(":shortUrlId", AttributeValue.builder().s(shortenedUrl).build());
+            QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder()
+                    .partitionValue(shortenedUrl)
+                    .build());
 
-            var queryRequest = QueryRequest.builder()
-                    .tableName(URL_MAPPINGS)
-                    .keyConditionExpression(partitionKey + " = " + partitionKeyRequest)
-                    .expressionAttributeValues(expressionAttributeValues)
-                    .build();
+            var results = urlTable.query(r -> r.queryConditional(queryConditional));
+            var urlEntity = results.items().stream().findFirst();
 
-            var result = dynamoDbClient.query(queryRequest);
-            if (result.hasItems() && !result.items().isEmpty()) {
-                var urlEntity = mapFromDatabase(result.items().getFirst());
-                var user = userRepositoryPort.findById(urlEntity.userId())
-                        .orElseThrow(() -> new UserNotFoundException("User " + urlEntity.userId() + " not found."));
+            return urlEntity.map(entity -> UrlMapper.toDomain(entity, getUser(entity.getUserId())));
 
-                return Optional.of(
-                        UrlEntity.fromMapping(
-                                urlEntity.shortUrlId(),
-                                urlEntity.longUrl(),
-                                urlEntity.createdAt(),
-                                urlEntity.updatedAt(),
-                                user,
-                                urlEntity.clicks(),
-                                urlEntity.isActive()
-                        )
-                );
-            }
         } catch (DynamoDbException e) {
             log.error("Error finding user with ID: {}", shortenedUrl, e);
             throw new UrlSearchDatabaseException("Failed to search URL with ID: " + shortenedUrl, e);
         }
-
-        return Optional.empty();
     }
 
-    private UrlEntity mapFromDatabase(Map<String, AttributeValue> item) {
-        return new UrlEntity(
-                item.get("shortUrlId").s(),
-                item.get("longUrl").s(),
-                LocalDateTime.parse(item.get("createdAt").s()), // Assuming ISO-8601 format
-                LocalDateTime.parse(item.get("updatedAt").s()), // Assuming ISO-8601 format
-                item.get("userId").s(),
-                Integer.parseInt(item.get("clicks").n()),
-                item.get("isActive").bool()
-        );
+    private User getUser(String userId) {
+        return userRepositoryPort.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User " + userId + " not found."));
     }
 
 }

@@ -15,9 +15,12 @@ import com.reginaldolribeiro.url_shortener.app.usecase.user.GetUserUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.ActiveProfiles;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.Set;
@@ -25,6 +28,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class ApplicationContextLoadTest {
 
     @Autowired
@@ -54,6 +58,10 @@ public class ApplicationContextLoadTest {
     @Autowired
     private DynamoDbClient dynamoDbClient;
 
+    @MockBean
+    private DynamoDbEnhancedClient dynamoDbEnhancedClient;
+
+
     @Test
     void contextLoads() {
         // Basic context load assertions
@@ -65,6 +73,7 @@ public class ApplicationContextLoadTest {
         assertNotNull(redisCacheManager);
         assertNotNull(objectMapper);
         assertNotNull(dynamoDbClient);
+        assertNotNull(dynamoDbEnhancedClient);
     }
 
     @Test

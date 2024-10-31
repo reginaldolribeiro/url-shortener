@@ -145,9 +145,9 @@ class CreateShortUrlUseCaseTest {
 
             assertThrows(UserNotFoundException.class, () -> createShortUrlUseCase.execute(input));
             verify(userRepositoryPort, times(1)).findById(nullableUserId);
-            verify(idGeneratorPort, times(0)).generate();
-            verify(urlRepositoryPort, times(0)).save(any(Url.class));
-            verify(urlCacheRepositoryPort, times(0)).save(any(Url.class));
+            verifyNoInteractions(idGeneratorPort);
+            verifyNoInteractions(urlRepositoryPort);
+            verifyNoInteractions(urlCacheRepositoryPort);
         }
 
         @Test
@@ -160,9 +160,9 @@ class CreateShortUrlUseCaseTest {
 
             assertThrows(UserNotFoundException.class, () -> createShortUrlUseCase.execute(input));
             verify(userRepositoryPort, times(1)).findById(invalidUserId);
-            verify(idGeneratorPort, times(0)).generate();
-            verify(urlRepositoryPort, times(0)).save(any(Url.class));
-            verify(urlCacheRepositoryPort, times(0)).save(any(Url.class));
+            verifyNoInteractions(idGeneratorPort);
+            verifyNoInteractions(urlRepositoryPort);
+            verifyNoInteractions(urlCacheRepositoryPort);
         }
 
         @Test
@@ -177,8 +177,8 @@ class CreateShortUrlUseCaseTest {
             assertThrows(IdGenerationException.class, () -> createShortUrlUseCase.execute(input));
             verify(userRepositoryPort, times(1)).findById(USER_ID);
             verify(idGeneratorPort, times(1)).generate();
-            verify(urlRepositoryPort, times(0)).save(any(Url.class));
-            verify(urlCacheRepositoryPort, times(0)).save(any(Url.class));
+            verifyNoInteractions(urlRepositoryPort);
+            verifyNoInteractions(urlCacheRepositoryPort);
         }
 
     }

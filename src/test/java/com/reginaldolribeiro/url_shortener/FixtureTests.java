@@ -30,6 +30,17 @@ public class FixtureTests {
     public static Url createSampleUrl(){
         return Url.create(SHORT_URL_CODE, DEFAULT_LONG_URL, createSampleUser());
     }
+    public static Url createCustomUrl(String id, String longUrl, User user){
+        return new Url.Builder()
+                .id(id)
+                .longUrl(longUrl)
+                .createdAt(LocalDateTime.now(Clock.systemUTC()))
+                .updatedAt(LocalDateTime.now(Clock.systemUTC()))
+                .user(user == null ? createSampleUser() : user)
+                .clicks(0)
+                .active(true)
+                .build();
+    }
 
     public static UrlEntity createSampleUrlEntity() {
         return new UrlEntity(
@@ -61,6 +72,17 @@ public class FixtureTests {
 
     public static User createSampleUser(String name, String email){
         return User.create(name, email);
+    }
+
+    public static User createCustomUser(UUID id, String name, String email){
+        return new User.Builder()
+                .id(id)
+                .name(name)
+                .email(email)
+                .createdAt(LocalDateTime.now(Clock.systemUTC()))
+                .updatedAt(LocalDateTime.now(Clock.systemUTC()))
+                .active(true)
+                .build();
     }
 
     public static CreateUserInput createSampleUserInput(){
@@ -109,13 +131,24 @@ public class FixtureTests {
         );
     }
 
-    public static UserEntity getUserEntity(){
+    public static UserEntity createSampleUserEntity(){
         return new UserEntity(
-                UUID.randomUUID().toString(),
+                generateSampleUserId(),
                 DEFAULT_USER_NAME,
                 DEFAULT_USER_EMAIL,
-                LocalDateTime.now(Clock.systemUTC()),
-                LocalDateTime.now(Clock.systemUTC()),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                true
+        );
+    }
+
+    public static UserEntity createSampleUserEntity(String name, String email) {
+        return new UserEntity(
+                generateSampleUserId(),
+                name,
+                email,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
                 true
         );
     }

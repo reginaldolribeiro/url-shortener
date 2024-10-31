@@ -132,8 +132,8 @@ class ShortUrlControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            verify(urlSanitizer, times(0)).sanitize(ORIGINAL_URL);
-            verify(createShortUrlPort, times(0)).execute(any(CreateShortUrlInput.class));
+            verifyNoInteractions(urlSanitizer);
+            verifyNoInteractions(createShortUrlPort);
         }
 
         @ParameterizedTest
@@ -169,7 +169,7 @@ class ShortUrlControllerTest {
                     .andExpect(jsonPath("$.status").value(400));
 
             verify(urlSanitizer, times(1)).sanitize(invalidLongUrl);
-            verify(createShortUrlPort, times(0)).execute(any(CreateShortUrlInput.class));
+            verifyNoInteractions(createShortUrlPort);
         }
 
 
@@ -246,8 +246,8 @@ class ShortUrlControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            verify(urlSanitizer, times(0)).sanitize(ORIGINAL_URL);
-            verify(createShortUrlPort, times(0)).execute(any(CreateShortUrlInput.class));
+            verifyNoInteractions(urlSanitizer);
+            verifyNoInteractions(createShortUrlPort);
         }
 
         @ParameterizedTest
@@ -272,8 +272,8 @@ class ShortUrlControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            verify(urlSanitizer, times(0)).sanitize(ORIGINAL_URL);
-            verify(createShortUrlPort, times(0)).execute(any(CreateShortUrlInput.class));
+            verifyNoInteractions(urlSanitizer);
+            verifyNoInteractions(createShortUrlPort);
         }
 
         @ParameterizedTest
@@ -299,9 +299,8 @@ class ShortUrlControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            // Verify no interactions since input is invalid
-            verify(getLongUrlPort, times(0)).execute(any(String.class));
-            verify(urlSanitizer, times(0)).isValidShortUrlCode(any(String.class));
+            verifyNoInteractions(getLongUrlPort);
+            verifyNoInteractions(urlSanitizer);
         }
 
         @Test

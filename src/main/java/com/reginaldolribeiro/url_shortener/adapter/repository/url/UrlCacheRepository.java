@@ -2,7 +2,6 @@ package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
-import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
@@ -31,15 +30,15 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
     @Override
     public void save(Url url) {
         log.info("Saving URL {} to cache ...", url.getId());
-        var urlEntity = mapToEntity(url);
-        var cacheKey = "urlCache::" + urlEntity.shortUrlId();
+        var urlEntity = UrlMapper.toEntity(url);
+        var cacheKey = "urlCache::" + urlEntity.getShortUrlId();
         try {
             redisTemplate.opsForValue().set(cacheKey, urlEntity);
         } catch (RedisConnectionFailureException | RedisCommandTimeoutException e) {
-            log.warn("Redis connection issue while saving URL {}: {}", urlEntity.shortUrlId(), e.getMessage());
+            log.warn("Redis connection issue while saving URL {}: {}", urlEntity.getShortUrlId(), e.getMessage());
             // Optionally retry or fallback
         } catch (IllegalArgumentException e) {
-            log.error("Serialization error for URL {}: {}", urlEntity.shortUrlId(), e.getMessage());
+            log.error("Serialization error for URL {}: {}", urlEntity.getShortUrlId(), e.getMessage());
             // Handle serialization issues
         } catch (Exception e) {
             log.error("Unexpected error while saving URL to cache", e);
@@ -59,10 +58,10 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
                 return Optional.empty();
             }
 
-            var user = userRepositoryPort.findById(cachedValue.userId())
-                    .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.userId() + " not found."));
+            var user = userRepositoryPort.findById(cachedValue.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.getUserId() + " not found."));
 
-            return Optional.of(mapToDomain(cachedValue, user));
+            return Optional.of(UrlMapper.toDomain(cachedValue, user));
 
         } catch (IllegalArgumentException e) {
             log.warn("Failed to convert cached value to UrlEntity for ID {}: {}", id, e.getMessage());
@@ -73,31 +72,6 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
         }
 
         return Optional.empty();
-    }
-
-    // Mapping methods
-    private UrlEntity mapToEntity(Url url) {
-        return new UrlEntity(
-                url.getId(),
-                url.getLongUrl(),
-                url.getCreatedAt(),
-                url.getUpdatedAt(),
-                url.getUser().getId().toString(),
-                url.getClicks(),
-                url.isActive()
-        );
-    }
-
-    private Url mapToDomain(UrlEntity entity, User user) {
-        return UrlEntity.fromMapping(
-                entity.shortUrlId(),
-                entity.longUrl(),
-                entity.createdAt(),
-                entity.updatedAt(),
-                user,
-                entity.clicks(),
-                entity.isActive()
-        );
     }
 
 }
