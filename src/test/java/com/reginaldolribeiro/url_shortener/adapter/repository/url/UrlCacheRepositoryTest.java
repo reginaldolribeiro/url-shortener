@@ -141,7 +141,7 @@ class UrlCacheRepositoryTest {
             assertTrue(result.isEmpty());
 
             verify(redisTemplate.opsForValue(), times(1)).get(FixtureTests.getCacheKey(invalidId));
-            verify(userRepositoryPort, times(0)).findById(invalidId);
+            verifyNoInteractions(userRepositoryPort);
         }
 
         @Test
@@ -199,7 +199,7 @@ class UrlCacheRepositoryTest {
             assertTrue(result.isEmpty());
 
             verify(redisTemplate.opsForValue(), times(1)).get(FixtureTests.getCacheKey(id));
-            verify(userRepositoryPort, times(0)).findById(anyString());
+            verifyNoInteractions(userRepositoryPort);
         }
     }
 

@@ -83,7 +83,7 @@ class CreateUserUseCaseTest {
         void shouldNotCreateUser(String name, String email) {
             var input = new CreateUserInput(name, email);
             assertThrows(IllegalArgumentException.class, () -> createUserUseCase.save(input));
-            verify(userRepositoryPort, times(0)).save(any(User.class));
+            verifyNoInteractions(userRepositoryPort);
         }
 
         @Test

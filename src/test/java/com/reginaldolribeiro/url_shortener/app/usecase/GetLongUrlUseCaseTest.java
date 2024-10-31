@@ -56,7 +56,7 @@ class GetLongUrlUseCaseTest {
             assertNotNull(longUrl);
             assertEquals(expectedLongUrl, longUrl);
             verify(urlCacheRepositoryPort, times(1)).findByUrlId(SHORTENED_URL);
-            verify(urlRepositoryPort, times(0)).findByShortenedUrl(expectedLongUrl);
+            verifyNoInteractions(urlRepositoryPort);
         }
 
         @Test
@@ -88,8 +88,8 @@ class GetLongUrlUseCaseTest {
         @DisplayName("Should throw exception for null, empty, or blank URL inputs")
         void shouldThrowExceptionForNullEmptyOrBlankUrlInputs(String invalidUrl) {
             assertThrows(ShortUrlMalformedException.class, () -> getLongUrlUseCase.execute(invalidUrl));
-            verify(urlCacheRepositoryPort, times(0)).findByUrlId(SHORTENED_URL);
-            verify(urlRepositoryPort, times(0)).findByShortenedUrl(invalidUrl);
+            verifyNoInteractions(urlCacheRepositoryPort);
+            verifyNoInteractions(urlRepositoryPort);
         }
 
         @ParameterizedTest
@@ -97,8 +97,8 @@ class GetLongUrlUseCaseTest {
         @DisplayName("Should throw exception for URLs with invalid length")
         void shouldThrowExceptionForUrlsWithInvalidLength(String invalidUrl) {
             assertThrows(ShortUrlMalformedException.class, () -> getLongUrlUseCase.execute(invalidUrl));
-            verify(urlCacheRepositoryPort, times(0)).findByUrlId(SHORTENED_URL);
-            verify(urlRepositoryPort, times(0)).findByShortenedUrl(invalidUrl);
+            verifyNoInteractions(urlCacheRepositoryPort);
+            verifyNoInteractions(urlRepositoryPort);
         }
 
     }

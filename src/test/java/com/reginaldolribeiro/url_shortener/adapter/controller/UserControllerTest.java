@@ -122,7 +122,7 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            verify(createUserPort, times(0)).save(any(CreateUserInput.class));
+            verifyNoInteractions(createUserPort);
         }
 
         @ParameterizedTest
@@ -156,7 +156,7 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            verify(createUserPort, times(0)).save(any(CreateUserInput.class));
+            verifyNoInteractions(createUserPort);
         }
 
         @ParameterizedTest
@@ -200,7 +200,7 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            verify(createUserPort, times(0)).save(any(CreateUserInput.class));
+            verifyNoInteractions(createUserPort);
         }
 
         @Test
@@ -319,7 +319,7 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andExpect(jsonPath("$.length()").value(4));
 
-            verify(getUserPort, times(0)).findById(any(UUID.class));
+            verifyNoInteractions(getUserPort);
         }
 
         @Test
