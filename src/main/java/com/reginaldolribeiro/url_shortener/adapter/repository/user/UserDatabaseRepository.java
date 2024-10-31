@@ -30,6 +30,9 @@ public class UserDatabaseRepository implements UserRepositoryPort {
 
     @Override
     public Optional<User> findById(String userId) {
+        if(userId == null || userId.isBlank())
+            throw new IllegalArgumentException("User ID cannot be null.");
+
         try {
             QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder()
                     .partitionValue(userId)
@@ -48,15 +51,10 @@ public class UserDatabaseRepository implements UserRepositoryPort {
 
     @Override
     public void save(User user) {
-//        var userEntity = new UserEntity(
-//                user.getId().toString(),
-//                user.getName(),
-//                user.getEmail(),
-//                user.getCreatedAt(),
-//                user.getUpdatedAt(),
-//                user.isActive()
-//        );
         var userEntity = UserMapper.toEntity(user);
+        if (userEntity == null) {
+            throw new IllegalArgumentException("User entity cannot be null.");
+        }
         try {
             userTable.putItem(userEntity);
         } catch (DynamoDbException e) {

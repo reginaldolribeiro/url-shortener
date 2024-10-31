@@ -16,14 +16,14 @@ public class UserMapper {
         if (user == null) {
             return null;
         }
-        return new UserEntity(
-                user.getId().toString(),
-                user.getName(),
-                user.getEmail(),
-                user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.isActive()
-        );
+        return new UserEntity.UserEntityBuilder()
+                .id(user.getId().toString())
+                .name(user.getName())
+                .email(user.getEmail())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .active(user.isActive())
+                .build();
     }
 
     /**

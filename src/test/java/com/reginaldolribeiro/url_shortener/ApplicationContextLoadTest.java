@@ -55,15 +55,12 @@ public class ApplicationContextLoadTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @Autowired
-//    private DynamoDbClient dynamoDbClient;
-//    @MockBean
-//    private DynamoDbEnhancedClient dynamoDbEnhancedClient;
+    @Autowired
+    private DynamoDbClient dynamoDbClient;
 
     @MockBean
-    private DynamoDbClient dynamoDbClient;
-    @MockBean
     private DynamoDbEnhancedClient dynamoDbEnhancedClient;
+
 
     @Test
     void contextLoads() {

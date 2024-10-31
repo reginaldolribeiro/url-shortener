@@ -11,7 +11,7 @@ public class Url implements Serializable {
     private LocalDateTime updatedAt;
     private User user;
     private Integer clicks;
-    private boolean isActive;
+    private boolean active;
 
     public static Url create(String id, String longUrl, User user) {
         if (id == null || id.isBlank())
@@ -27,7 +27,7 @@ public class Url implements Serializable {
                 .updatedAt(LocalDateTime.now(Clock.systemUTC()))
                 .user(user)
                 .clicks(0)
-                .isActive(true)
+                .active(true)
                 .build();
     }
 
@@ -36,11 +36,11 @@ public class Url implements Serializable {
     }
 
     public void enable() {
-        this.isActive = true;
+        this.active = true;
     }
 
     public void disable() {
-        this.isActive = false;
+        this.active = false;
     }
 
     public String getId() {
@@ -67,8 +67,9 @@ public class Url implements Serializable {
         return clicks;
     }
 
+
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     // Private constructor for the builder
@@ -79,7 +80,7 @@ public class Url implements Serializable {
         this.updatedAt = builder.updatedAt;
         this.user = builder.user;
         this.clicks = builder.clicks;
-        this.isActive = builder.isActive;
+        this.active = builder.active;
     }
 
     // Static inner Builder class
@@ -90,7 +91,7 @@ public class Url implements Serializable {
         private LocalDateTime updatedAt;
         private User user;
         private Integer clicks;
-        private boolean isActive;
+        private boolean active;
 
         public Builder id(String id) {
             this.id = id;
@@ -122,8 +123,8 @@ public class Url implements Serializable {
             return this;
         }
 
-        public Builder isActive(boolean isActive) {
-            this.isActive = isActive;
+        public Builder active(boolean active) {
+            this.active = active;
             return this;
         }
 

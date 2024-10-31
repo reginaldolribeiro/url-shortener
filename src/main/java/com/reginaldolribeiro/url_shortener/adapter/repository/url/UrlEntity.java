@@ -1,8 +1,7 @@
 package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
-import com.reginaldolribeiro.url_shortener.app.domain.Url;
-import com.reginaldolribeiro.url_shortener.app.domain.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Builder
 public class UrlEntity implements Serializable {
 
     private String shortUrlId;
@@ -28,7 +28,7 @@ public class UrlEntity implements Serializable {
 
     private String userId;
     private int clicks;
-    private boolean isActive;
+    private boolean active;
 
     @DynamoDbPartitionKey
     public String getShortUrlId() {
@@ -57,26 +57,6 @@ public class UrlEntity implements Serializable {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
-
-
-    public static Url fromMapping(String shortUrlId,
-                                  String longUrl,
-                                  LocalDateTime createdAt,
-                                  LocalDateTime updatedAt,
-                                  User user,
-                                  int clicks,
-                                  boolean isActive) {
-        return new Url.Builder()
-                .id(shortUrlId)
-                .longUrl(longUrl)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
-                .user(user)
-                .clicks(clicks)
-                .isActive(isActive)
-                .build();
-    }
-
 }

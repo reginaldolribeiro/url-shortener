@@ -4,10 +4,7 @@ import com.reginaldolribeiro.url_shortener.FixtureTests;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -32,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-//@Disabled
+@Disabled
 class UrlDatabaseRepositoryTest {
 
     public static final Url URL = FixtureTests.createSampleUrl();

@@ -2,7 +2,6 @@ package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
-import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
@@ -31,7 +30,7 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
     @Override
     public void save(Url url) {
         log.info("Saving URL {} to cache ...", url.getId());
-        var urlEntity = mapToEntity(url);
+        var urlEntity = UrlMapper.toEntity(url);
         var cacheKey = "urlCache::" + urlEntity.getShortUrlId();
         try {
             redisTemplate.opsForValue().set(cacheKey, urlEntity);
@@ -62,7 +61,7 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
             var user = userRepositoryPort.findById(cachedValue.getUserId())
                     .orElseThrow(() -> new UserNotFoundException("User " + cachedValue.getUserId() + " not found."));
 
-            return Optional.of(mapToDomain(cachedValue, user));
+            return Optional.of(UrlMapper.toDomain(cachedValue, user));
 
         } catch (IllegalArgumentException e) {
             log.warn("Failed to convert cached value to UrlEntity for ID {}: {}", id, e.getMessage());
@@ -73,31 +72,6 @@ public class UrlCacheRepository implements UrlCacheRepositoryPort {
         }
 
         return Optional.empty();
-    }
-
-    // Mapping methods
-    private UrlEntity mapToEntity(Url url) {
-        return new UrlEntity(
-                url.getId(),
-                url.getLongUrl(),
-                url.getCreatedAt(),
-                url.getUpdatedAt(),
-                url.getUser().getId().toString(),
-                url.getClicks(),
-                url.isActive()
-        );
-    }
-
-    private Url mapToDomain(UrlEntity entity, User user) {
-        return UrlEntity.fromMapping(
-                entity.getShortUrlId(),
-                entity.getLongUrl(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                user,
-                entity.getClicks(),
-                entity.isActive()
-        );
     }
 
 }

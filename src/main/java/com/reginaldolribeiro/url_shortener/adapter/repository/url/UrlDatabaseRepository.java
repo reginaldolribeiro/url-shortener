@@ -36,13 +36,11 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
     @Override
     public void save(Url url) {
         log.info("Saving URL to database ....");
-        var urlEntity = new UrlEntity(url.getId(),
-                url.getLongUrl(),
-                url.getCreatedAt(),
-                url.getUpdatedAt(),
-                url.getUser().getId().toString(),
-                url.getClicks(),
-                url.isActive());
+        if (url == null) {
+            throw new IllegalArgumentException("Url cannot be null.");
+        }
+
+        var urlEntity = UrlMapper.toEntity(url);
         try {
             urlTable.putItem(urlEntity);
         } catch (DynamoDbException e) {
@@ -55,6 +53,9 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
 //    @Cacheable(value = "urlCache", key = "'urlCache::' + #shortenedUrl")
     public Optional<Url> findByShortenedUrl(String shortenedUrl) {
         log.info("Searching for {} in the database", shortenedUrl);
+        if(shortenedUrl == null || shortenedUrl.isBlank())
+            throw new IllegalArgumentException("Url cannot be null.");
+
         try {
             QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder()
                     .partitionValue(shortenedUrl)
@@ -63,17 +64,7 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
             var results = urlTable.query(r -> r.queryConditional(queryConditional));
             var urlEntity = results.items().stream().findFirst();
 
-            return urlEntity.map(entity ->
-                    UrlEntity.fromMapping(
-                            entity.getShortUrlId(),
-                            entity.getLongUrl(),
-                            entity.getCreatedAt(),
-                            entity.getUpdatedAt(),
-                            getUser(entity.getUserId()),
-                            entity.getClicks(),
-                            entity.isActive()
-                    )
-            );
+            return urlEntity.map(entity -> UrlMapper.toDomain(entity, getUser(entity.getUserId())));
 
         } catch (DynamoDbException e) {
             log.error("Error finding user with ID: {}", shortenedUrl, e);

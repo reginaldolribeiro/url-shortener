@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+//@Disabled
 @ExtendWith(MockitoExtension.class)
 class UrlCacheRepositoryTest {
 
@@ -64,8 +66,22 @@ class UrlCacheRepositoryTest {
         @Test
         @DisplayName("Should save UrlEntity to Redis successfully")
         void shouldSaveUrlSuccessfully() {
+            ArgumentCaptor<UrlEntity> entityCaptor = ArgumentCaptor.forClass(UrlEntity.class);
+            var cacheKey = FixtureTests.getCacheKey(URL.getId());
+
             assertDoesNotThrow(() -> urlCacheRepository.save(URL));
-            verify(redisTemplate.opsForValue(), times(1)).set(FixtureTests.getCacheKey(URL.getId()), URL_ENTITY);
+
+            verify(redisTemplate.opsForValue(), times(1))
+                    .set(eq(cacheKey), entityCaptor.capture());
+
+            var capturedEntity = entityCaptor.getValue();
+            assertEquals(URL_ENTITY.getShortUrlId(), capturedEntity.getShortUrlId());
+            assertEquals(URL_ENTITY.getLongUrl(), capturedEntity.getLongUrl());
+            assertEquals(URL_ENTITY.getCreatedAt(), capturedEntity.getCreatedAt());
+            assertEquals(URL_ENTITY.getUpdatedAt(), capturedEntity.getUpdatedAt());
+            assertEquals(URL_ENTITY.getUserId(), capturedEntity.getUserId());
+            assertEquals(URL_ENTITY.getClicks(), capturedEntity.getClicks());
+            assertEquals(URL_ENTITY.isActive(), capturedEntity.isActive());
         }
 
         @Test

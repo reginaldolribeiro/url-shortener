@@ -130,7 +130,7 @@ class UrlTest {
                             .longUrl(VALID_LONG_URL)
                             .user(VALID_USER)
                             .clicks(0)
-                            .isActive(true)
+                            .active(true)
                             .build());
         }
 
@@ -143,7 +143,7 @@ class UrlTest {
                             .longUrl(VALID_LONG_URL)
                             .user(VALID_USER)
                             .clicks(0)
-                            .isActive(true)
+                            .active(true)
                             .build());
         }
 
@@ -155,7 +155,7 @@ class UrlTest {
                             .id(VALID_ID)
                             .user(VALID_USER)
                             .clicks(0)
-                            .isActive(true)
+                            .active(true)
                             .build());
         }
 
@@ -168,7 +168,7 @@ class UrlTest {
                             .longUrl("   ")
                             .user(VALID_USER)
                             .clicks(0)
-                            .isActive(true)
+                            .active(true)
                             .build());
         }
     }
