@@ -8,18 +8,24 @@ public class CreateShortUrlUseCase implements CreateShortUrlPort {
 
     private final UserRepositoryPort userRepositoryPort;
     private final UrlRepositoryPort urlRepositoryPort;
-    private final UrlCacheRepositoryPort urlCacheRepositoryPort;
+//    private final UrlCacheRepositoryPort urlCacheRepositoryPort;
     private final IdGeneratorPort idGeneratorPort;
 
-    public CreateShortUrlUseCase(UserRepositoryPort userRepositoryPort,
-                                 UrlRepositoryPort urlRepositoryPort,
-                                 UrlCacheRepositoryPort urlCacheRepositoryPort,
-                                 IdGeneratorPort idGeneratorPort) {
+    public CreateShortUrlUseCase(UserRepositoryPort userRepositoryPort, UrlRepositoryPort urlRepositoryPort, IdGeneratorPort idGeneratorPort) {
         this.userRepositoryPort = userRepositoryPort;
         this.urlRepositoryPort = urlRepositoryPort;
-        this.urlCacheRepositoryPort = urlCacheRepositoryPort;
         this.idGeneratorPort = idGeneratorPort;
     }
+
+//    public CreateShortUrlUseCase(UserRepositoryPort userRepositoryPort,
+//                                 UrlRepositoryPort urlRepositoryPort,
+//                                 UrlCacheRepositoryPort urlCacheRepositoryPort,
+//                                 IdGeneratorPort idGeneratorPort) {
+//        this.userRepositoryPort = userRepositoryPort;
+//        this.urlRepositoryPort = urlRepositoryPort;
+//        this.urlCacheRepositoryPort = urlCacheRepositoryPort;
+//        this.idGeneratorPort = idGeneratorPort;
+//    }
 
     @Override
     public CreateShortUrlOutput execute(CreateShortUrlInput input) {
@@ -30,7 +36,7 @@ public class CreateShortUrlUseCase implements CreateShortUrlPort {
         var url = Url.create(shortenedUrlId, input.longUrl(), user);
 
         urlRepositoryPort.save(url);
-        urlCacheRepositoryPort.save(url);
+//        urlCacheRepositoryPort.save(url);
 
         return new CreateShortUrlOutput(
                 url.getUser().getId().toString(),

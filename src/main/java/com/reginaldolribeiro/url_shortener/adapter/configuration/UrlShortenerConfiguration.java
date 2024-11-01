@@ -13,17 +13,17 @@ public class UrlShortenerConfiguration {
 
     private final UserRepositoryPort userRepositoryPort;
     private final UrlRepositoryPort urlRepositoryPort;
-    private final UrlCacheRepositoryPort urlCacheRepositoryPort;
+//    private final UrlCacheRepositoryPort urlCacheRepositoryPort;
     private final IdGeneratorPort idGeneratorPort;
 
     public UrlShortenerConfiguration(UserRepositoryPort userRepositoryPort,
                                      UrlRepositoryPort urlRepositoryPort,
-                                     UrlCacheRepositoryPort urlCacheRepositoryPort,
+//                                     UrlCacheRepositoryPort urlCacheRepositoryPort,
                                      IdGeneratorPort idGeneratorPort,
                                      ConfigurationService configurationService) {
         this.userRepositoryPort = userRepositoryPort;
         this.urlRepositoryPort = urlRepositoryPort;
-        this.urlCacheRepositoryPort = urlCacheRepositoryPort;
+//        this.urlCacheRepositoryPort = urlCacheRepositoryPort;
         this.idGeneratorPort = idGeneratorPort;
     }
 
@@ -32,13 +32,16 @@ public class UrlShortenerConfiguration {
     public CreateShortUrlPort createShortUrlPort() {
         return new CreateShortUrlUseCase(userRepositoryPort,
                 urlRepositoryPort,
-                urlCacheRepositoryPort,
+//                urlCacheRepositoryPort,
                 idGeneratorPort);
     }
 
     @Bean
     public GetLongUrlPort getLongUrlPort(){
-        return new GetLongUrlUseCase(urlRepositoryPort, urlCacheRepositoryPort);
+        return new GetLongUrlUseCase(urlRepositoryPort);
+//        return new GetLongUrlUseCase(urlRepositoryPort,
+//                urlCacheRepositoryPort
+//        );
     }
 
     @Bean
