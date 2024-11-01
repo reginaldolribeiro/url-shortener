@@ -1,6 +1,8 @@
 package com.reginaldolribeiro.url_shortener.adapter.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.reginaldolribeiro.url_shortener.adapter.controller.url.*;
+import com.reginaldolribeiro.url_shortener.adapter.helper.ObservabilityHelper;
 import com.reginaldolribeiro.url_shortener.adapter.repository.url.UrlSaveDatabaseException;
 import com.reginaldolribeiro.url_shortener.adapter.repository.url.UrlSearchDatabaseException;
 import com.reginaldolribeiro.url_shortener.adapter.repository.user.UserSaveDatabaseException;
@@ -23,11 +25,20 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    private final ObservabilityHelper observabilityHelper;
+
+    public GlobalExceptionHandler(ObservabilityHelper observabilityHelper) {
+        this.observabilityHelper = observabilityHelper;
+    }
+
+
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) throws JsonProcessingException {
         log.error("An user not found error occurred: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler(UrlNotFoundException.class)

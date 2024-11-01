@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reginaldolribeiro.url_shortener.FixtureTests;
 import com.reginaldolribeiro.url_shortener.adapter.controller.user.CreateUserRequest;
 import com.reginaldolribeiro.url_shortener.adapter.controller.user.UserController;
+import com.reginaldolribeiro.url_shortener.adapter.helper.ObservabilityHelper;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.CreateUserPort;
 import com.reginaldolribeiro.url_shortener.app.port.GetUserPort;
@@ -47,6 +48,9 @@ class UserControllerTest {
 
     @MockBean
     private GetUserPort getUserPort;
+
+    @MockBean
+    private ObservabilityHelper observabilityHelper;
 
     @Nested
     @DisplayName("POST /user - Create User")
