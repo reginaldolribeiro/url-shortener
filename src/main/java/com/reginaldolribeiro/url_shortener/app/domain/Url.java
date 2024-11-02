@@ -13,6 +13,8 @@ public class Url implements Serializable {
     private Integer clicks;
     private boolean active;
 
+//    public Url(){}
+
     public static Url create(String id, String longUrl, User user) {
         if (id == null || id.isBlank())
             throw new IllegalArgumentException("Id cannot be null or empty.");
