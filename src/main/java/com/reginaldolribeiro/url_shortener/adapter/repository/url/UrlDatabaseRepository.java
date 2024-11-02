@@ -37,7 +37,7 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
 
     @Override
     @CachePut(value = "urlCache", key = "#url.id", unless = "#result == null")
-    public Url save(Url url) {
+    public UrlEntity save(Url url) {
         log.info("Saving URL to database ....");
         if (url == null) {
             throw new IllegalArgumentException("Url cannot be null.");
@@ -46,7 +46,8 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
         var urlEntity = UrlMapper.toEntity(url);
         try {
             urlTable.putItem(urlEntity);
-            return UrlMapper.toDomain(urlEntity, url.getUser());
+            return urlEntity;
+//            return UrlMapper.toDomain(urlEntity, url.getUser());
         } catch (DynamoDbException e) {
             log.error("Error saving URL with ID: {}", urlEntity.getShortUrlId(), e);
             throw new UrlSaveDatabaseException("Failed to save URL with ID: " + urlEntity.getShortUrlId(), e);
@@ -54,26 +55,29 @@ public class UrlDatabaseRepository implements UrlRepositoryPort {
     }
 
     @Override
-    @Cacheable(value = "urlCache", key = "#shortenedUrl")
-    public Optional<Url> findByShortenedUrl(String shortenedUrl) {
-        log.info("Searching for {} in the database", shortenedUrl);
-        if(shortenedUrl == null || shortenedUrl.isBlank())
+    @Cacheable(value = "urlCache", key = "#id")
+    public Optional<UrlEntity> findByShortenedUrl(String id) {
+//    @Cacheable(value = "urlCache", key = "#short_url_id")
+//    public Optional<UrlEntity> findByShortenedUrl(String short_url_id) {
+        log.info("Searching for {} in the database", id);
+        if(id == null || id.isBlank())
             throw new IllegalArgumentException("Url cannot be null.");
 
         try {
             QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder()
-                    .partitionValue(shortenedUrl)
+                    .partitionValue(id)
                     .build());
 
             var results = urlTable.query(r -> r.queryConditional(queryConditional));
             var urlEntity = results.items().stream().findFirst();
 
             var url = urlEntity.map(entity -> UrlMapper.toDomain(entity, getUser(entity.getUserId())));
-            return url.isPresent() ? url : Optional.empty();
+//            return url.isPresent() ? Optional.of(UrlMapper.toEntity(url.get())) : Optional.empty();
+            return url.isPresent() ? Optional.of(UrlMapper.toEntity(url.get())) : Optional.empty();
 
         } catch (DynamoDbException e) {
-            log.error("Error finding user with ID: {}", shortenedUrl, e);
-            throw new UrlSearchDatabaseException("Failed to search URL with ID: " + shortenedUrl, e);
+            log.error("Error finding user with ID: {}", id, e);
+            throw new UrlSearchDatabaseException("Failed to search URL with ID: " + id, e);
         }
     }
 

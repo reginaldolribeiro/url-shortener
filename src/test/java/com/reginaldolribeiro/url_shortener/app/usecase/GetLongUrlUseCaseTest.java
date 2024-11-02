@@ -2,6 +2,7 @@ package com.reginaldolribeiro.url_shortener.app.usecase;
 
 import com.reginaldolribeiro.url_shortener.FixtureTests;
 import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlDisabledException;
+import com.reginaldolribeiro.url_shortener.adapter.repository.url.UrlMapper;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.ShortUrlMalformedException;
@@ -66,7 +67,7 @@ class GetLongUrlUseCaseTest {
             var url = Url.create(SHORTENED_URL, expectedLongUrl, USER);
 
             when(urlCacheRepositoryPort.findByUrlId(SHORTENED_URL)).thenReturn(Optional.empty());
-            when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(url));
+            when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(UrlMapper.toEntity(url)));
 
             var longUrl = getLongUrlUseCase.execute(SHORTENED_URL);
 
@@ -111,7 +112,7 @@ class GetLongUrlUseCaseTest {
         url.disable();
 
         when(urlCacheRepositoryPort.findByUrlId(SHORTENED_URL)).thenReturn(Optional.of(url));
-        when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(url));
+        when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(UrlMapper.toEntity(url)));
 
         UrlDisabledException exception = assertThrows(UrlDisabledException.class, () -> getLongUrlUseCase.execute(SHORTENED_URL));
         assertEquals("URL is disabled.", exception.getMessage());
