@@ -15,32 +15,38 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 1. Set BUILD_TAG based on branch name and run number
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # Set BUILD_TAG based on branch name and run number
       - name: Set BUILD_TAG
         run: |
           echo BUILD_TAG=$(echo "${{ github.head_ref || github.ref_name }}" | sed "s,/,_,g")-${{ github.run_number }} >> $GITHUB_ENV
 
-      # 2. Print BUILD_TAG for verification
+      # Print BUILD_TAG for verification
       - name: Print BUILD_TAG defined
         run: |
           echo "Branch     ---> ${{ github.head_ref || github.ref_name }}"
           echo "Run number ---> ${{ github.run_number }}"
           echo "Tag        ---> ${{ env.BUILD_TAG }}"
 
-      # 3. Log in to Docker Hub
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-      # 4. Step to build the JAR file
+      # Step to build the JAR file
       - name: Build JAR file
         run: mvn clean package -DskipTests
 
-      # 5. Build Docker image with BUILD_TAG
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # Build Docker image with BUILD_TAG
       - name: Build Docker image
         run: docker build -t reginaldolribeiro/url-shortener:${{ env.BUILD_TAG }} -f src/infra/Dockerfile .
 
-      # 6. Push Docker image to Docker Hub
+      # Push Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
         run: docker push reginaldolribeiro/url-shortener:${{ env.BUILD_TAG }}
