@@ -14,11 +14,11 @@ import com.reginaldolribeiro.url_shortener.app.usecase.user.CreateUserUseCase;
 import com.reginaldolribeiro.url_shortener.app.usecase.user.GetUserUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -47,13 +47,14 @@ public class ApplicationContextLoadTest {
     private GetUserPort getUserPort;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Autowired
     private RedisCacheManager redisCacheManager;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    @Qualifier("cacheObjectMapper")
+    private ObjectMapper cacheObjectMapper;
 
     @Autowired
     private DynamoDbClient dynamoDbClient;
@@ -69,9 +70,9 @@ public class ApplicationContextLoadTest {
         assertNotNull(getLongUrlPort);
         assertNotNull(createUserPort);
         assertNotNull(getUserPort);
-        assertNotNull(redisTemplate);
         assertNotNull(redisCacheManager);
         assertNotNull(objectMapper);
+        assertNotNull(cacheObjectMapper);
         assertNotNull(dynamoDbClient);
         assertNotNull(dynamoDbEnhancedClient);
     }
@@ -90,14 +91,20 @@ public class ApplicationContextLoadTest {
     }
 
     @Test
-    void validateRedisTemplateConfiguration() {
-        assertTrue(
-                redisTemplate.getKeySerializer() instanceof org.springframework.data.redis.serializer.StringRedisSerializer,
-                "RedisTemplate should use StringRedisSerializer for keys"
-        );
-        assertTrue(
-                redisTemplate.getValueSerializer() instanceof org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer,
-                "RedisTemplate should use GenericJackson2JsonRedisSerializer for values"
+    void validateCacheObjectMapperConfiguration() {
+        Set<Object> moduleIds = cacheObjectMapper.getRegisteredModuleIds();
+        assertAll(
+                () -> assertTrue(moduleIds.contains("com.fasterxml.jackson.datatype.jdk8.Jdk8Module")),
+                () -> assertTrue(moduleIds.contains("jackson-datatype-jsr310")),
+                () -> assertFalse(cacheObjectMapper.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)),
+                () -> assertFalse(cacheObjectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)),
+                () -> assertEquals(PropertyNamingStrategies.SNAKE_CASE, cacheObjectMapper.getPropertyNamingStrategy()),
+                () -> assertTrue(cacheObjectMapper.getDateFormat() instanceof StdDateFormat, "default DateFormat used by Jackson’s ObjectMapper"),
+
+                // Check for type information in polymorphic typing
+                () -> assertNotNull(cacheObjectMapper.getPolymorphicTypeValidator()),
+                () -> assertTrue(cacheObjectMapper.activateDefaultTyping(
+                        cacheObjectMapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL) != null)
         );
     }
 

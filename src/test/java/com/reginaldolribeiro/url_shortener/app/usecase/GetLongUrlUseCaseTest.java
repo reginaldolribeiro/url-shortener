@@ -2,11 +2,10 @@ package com.reginaldolribeiro.url_shortener.app.usecase;
 
 import com.reginaldolribeiro.url_shortener.FixtureTests;
 import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlDisabledException;
-import com.reginaldolribeiro.url_shortener.adapter.repository.url.UrlMapper;
+import com.reginaldolribeiro.url_shortener.adapter.controller.url.UrlNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.domain.Url;
 import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.ShortUrlMalformedException;
-import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UrlRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.usecase.url.GetLongUrlUseCase;
 import org.junit.jupiter.api.DisplayName;
@@ -37,43 +36,49 @@ class GetLongUrlUseCaseTest {
 
     @Mock
     private UrlRepositoryPort urlRepositoryPort;
-    @Mock
-    private UrlCacheRepositoryPort urlCacheRepositoryPort;
 
     @Nested
     @DisplayName("Valid Short URL Codes")
     class ValidShortUrlCodes {
 
         @Test
-        @DisplayName("Should find long URL in cache")
-        public void shouldFindLongUrlInCache(){
+        @DisplayName("Should find long URL from repository (cache or database)")
+        public void shouldFindLongUrl() {
             var expectedLongUrl = "https://example.com/very-long-url10";
             var url = Url.create(SHORTENED_URL, expectedLongUrl, USER);
 
-            when(urlCacheRepositoryPort.findByUrlId(SHORTENED_URL)).thenReturn(Optional.of(url));
+            when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(url));
 
             var longUrl = getLongUrlUseCase.execute(SHORTENED_URL);
 
             assertNotNull(longUrl);
             assertEquals(expectedLongUrl, longUrl);
-            verify(urlCacheRepositoryPort, times(1)).findByUrlId(SHORTENED_URL);
-            verifyNoInteractions(urlRepositoryPort);
+            verify(urlRepositoryPort, times(1)).findByShortenedUrl(SHORTENED_URL);
         }
 
         @Test
-        @DisplayName("Should not find long URL in cache")
-        public void shouldNotFindLongUrlInCache() {
+        @DisplayName("Should throw UrlNotFoundException when URL is not found")
+        public void shouldThrowUrlNotFoundExceptionWhenUrlNotFound() {
+            when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.empty());
+
+            var exception = assertThrows(UrlNotFoundException.class, () -> getLongUrlUseCase.execute(SHORTENED_URL));
+            assertEquals("URL " + SHORTENED_URL + " not found.", exception.getMessage());
+
+            verify(urlRepositoryPort, times(1)).findByShortenedUrl(SHORTENED_URL);
+        }
+
+        @Test
+        @DisplayName("Should throw UrlDisabledException when URL is disabled")
+        public void shouldThrowUrlDisabledExceptionWhenUrlIsDisabled() {
             var expectedLongUrl = "https://example.com/very-long-url10";
             var url = Url.create(SHORTENED_URL, expectedLongUrl, USER);
+            url.disable();
 
-            when(urlCacheRepositoryPort.findByUrlId(SHORTENED_URL)).thenReturn(Optional.empty());
-            when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(UrlMapper.toEntity(url)));
+            when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(url));
 
-            var longUrl = getLongUrlUseCase.execute(SHORTENED_URL);
+            var exception = assertThrows(UrlDisabledException.class, () -> getLongUrlUseCase.execute(SHORTENED_URL));
+            assertEquals("URL is disabled.", exception.getMessage());
 
-            assertNotNull(longUrl);
-            assertEquals(expectedLongUrl, longUrl);
-            verify(urlCacheRepositoryPort, times(1)).findByUrlId(SHORTENED_URL);
             verify(urlRepositoryPort, times(1)).findByShortenedUrl(SHORTENED_URL);
         }
 
@@ -89,7 +94,6 @@ class GetLongUrlUseCaseTest {
         @DisplayName("Should throw exception for null, empty, or blank URL inputs")
         void shouldThrowExceptionForNullEmptyOrBlankUrlInputs(String invalidUrl) {
             assertThrows(ShortUrlMalformedException.class, () -> getLongUrlUseCase.execute(invalidUrl));
-            verifyNoInteractions(urlCacheRepositoryPort);
             verifyNoInteractions(urlRepositoryPort);
         }
 
@@ -98,7 +102,6 @@ class GetLongUrlUseCaseTest {
         @DisplayName("Should throw exception for URLs with invalid length")
         void shouldThrowExceptionForUrlsWithInvalidLength(String invalidUrl) {
             assertThrows(ShortUrlMalformedException.class, () -> getLongUrlUseCase.execute(invalidUrl));
-            verifyNoInteractions(urlCacheRepositoryPort);
             verifyNoInteractions(urlRepositoryPort);
         }
 
@@ -111,13 +114,11 @@ class GetLongUrlUseCaseTest {
         var url = Url.create(SHORTENED_URL, expectedLongUrl, USER);
         url.disable();
 
-        when(urlCacheRepositoryPort.findByUrlId(SHORTENED_URL)).thenReturn(Optional.of(url));
-        when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(UrlMapper.toEntity(url)));
+        when(urlRepositoryPort.findByShortenedUrl(SHORTENED_URL)).thenReturn(Optional.of(url));
 
         UrlDisabledException exception = assertThrows(UrlDisabledException.class, () -> getLongUrlUseCase.execute(SHORTENED_URL));
         assertEquals("URL is disabled.", exception.getMessage());
 
-        verify(urlCacheRepositoryPort, times(1)).findByUrlId(SHORTENED_URL);
         verify(urlRepositoryPort, times(1)).findByShortenedUrl(SHORTENED_URL);
     }
 

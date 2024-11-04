@@ -13,8 +13,6 @@ public class User implements Serializable {
     private LocalDateTime updatedAt;
     private boolean active;
 
-    public User(){}
-
     public static User create(String name, String email){
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be null or empty.");
