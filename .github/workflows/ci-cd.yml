@@ -20,6 +20,13 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
+
       # Set BUILD_TAG based on branch name and run number
       - name: Set BUILD_TAG
         run: |
