@@ -33,18 +33,9 @@ public class RedisConfig {
 
     private final ObjectMapper objectMapper;
 
-    // Inject the ObjectMapper bean from JacksonConfig
     public RedisConfig(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-//        this.objectMapper.registerModule(new JavaTimeModule()); // Ensure module is registered
     }
-
-//    @Bean
-//    public LettuceConnectionFactory redisConnectionFactory() {
-//        var connectionFactory = new LettuceConnectionFactory();
-//        log.info("***** [LettuceConnectionFactory] - Starting REDIS with host: {} and port: {}", connectionFactory.getHostName(), connectionFactory.getPort());
-//        return connectionFactory;
-//    }
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {

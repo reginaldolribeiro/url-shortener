@@ -5,6 +5,7 @@ WORKDIR /opt/app
 
 # Copy necessary files
 COPY target/*.jar application.jar
+
 #COPY .env .env
 #COPY src/infra/wait-for-it.sh /opt/app/wait-for-it.sh
 #RUN chmod +x /opt/app/wait-for-it.sh
@@ -18,11 +19,4 @@ USER spring:spring
 # Run the application
 CMD ["java", "-jar", "application.jar"]
 #CMD ["sh", "/opt/app/wait-for-it.sh", "redis", "6379", "--", "java", "-jar", "application.jar"]
-
-
 #CMD ["/opt/app/wait-for-it.sh", "redis", "6379", "--", "sh", "-c", "java -jar application.jar"]
-#CMD ["sh", "/opt/app/wait-for-it.sh", "url-shortener-redis", "6379", "--", "java", "-jar", "application.jar"]
-#CMD ["java", "-jar", "application.jar"]
-#CMD ["/opt/app/wait-for-it.sh", "redis", "6379", "--", "java", "-jar", "application.jar"]
-#CMD ["/opt/app/wait-for-it.sh", "redis", "6379", "--", "sh", "-c", "java -jar application.jar"]
-#CMD ["sh", "/opt/app/wait-for-it.sh", "redis", "6379", "--", "java", "-jar", "application.jar"]
