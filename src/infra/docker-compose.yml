@@ -1,24 +1,24 @@
 services:
-#  app:
-#    container_name: url-shortener-app
-#    build:
-#      context: ../..
-#      dockerfile: src/infra/Dockerfile
-#    restart: unless-stopped
-#    environment:
-#      - SPRING_REDIS_HOST=url-shortener-redis  # Explicitly set redis host and port
-#      - SPRING_REDIS_PORT=6379
-#      - AWS_ACCESS_KEY_ID=AKIA4A2EUGSLBBDL6BFT
-#      - AWS_SECRET_ACCESS_KEY=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
-#      - AWS_REGION=us-east-1
-#      - NEW_RELIC_LICENSE_KEY=795b4d6e00f3f102d68044aa1ccad632FFFFNRAL
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      redis:
-#        condition: service_healthy
-#    networks:
-#      - url-shortener-network
+  app:
+    container_name: url-shortener-app
+    build:
+      context: ../..
+      dockerfile: src/infra/Dockerfile
+    restart: unless-stopped
+    environment:
+      - SPRING_REDIS_HOST=url-shortener-redis  # Explicitly set redis host and port
+      - SPRING_REDIS_PORT=6379
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - url-shortener-network
 
   redis:
     image: redis:latest
