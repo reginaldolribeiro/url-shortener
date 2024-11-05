@@ -39,8 +39,8 @@ public class UserController {
         log.info("Received createUser request with parameters: {}", createUserRequest);
 
         observabilityHelper.addCustomParameters(Map.of(
-                "userName", createUserRequest.name(),
-                "userEmail", createUserRequest.email())
+                "url-shortener.userName", createUserRequest.name(),
+                "url-shortener.userEmail", createUserRequest.email())
         );
 
         var input = new CreateUserInput(createUserRequest.name(), createUserRequest.email());
@@ -61,7 +61,7 @@ public class UserController {
     public ResponseEntity<UserResponse> findById(@PathVariable @NotBlank String id) throws JsonProcessingException {
         log.info("Received findById request with parameter: {}", id);
 
-        observabilityHelper.addCustomParameter("userId", id);
+        observabilityHelper.addCustomParameter("url-shortener.userId", id);
 
         var parsedId = parseUuid(id);
         var output = getUserPort.findById(parsedId);

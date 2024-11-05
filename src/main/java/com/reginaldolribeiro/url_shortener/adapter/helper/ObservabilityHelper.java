@@ -48,7 +48,7 @@ public class ObservabilityHelper {
         if (responseEntity.getBody() != null) {
             try {
                 String responseBody = objectMapper.writeValueAsString(responseEntity.getBody());
-                NewRelic.addCustomParameter("responseBody", responseBody);
+                NewRelic.addCustomParameter("url-shortener.responseBody", responseBody);
             } catch (JsonProcessingException e) {
                 System.err.println("Failed to serialize response body for New Relic: " + e.getMessage());
             }

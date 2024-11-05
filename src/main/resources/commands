@@ -1,1 +1,18 @@
 java -javaagent:./newrelic.jar -jar target/url-shortener-0.0.1-SNAPSHOT.jar
+
+java -javaagent:./newrelic.jar \
+-Dspring-boot.run.profiles=local \
+-Dspring-boot.run.arguments="--AWS_REGION=us-east-1 \
+--SPRING_REDIS_HOST=${SPRING_REDIS_HOST} \
+--AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+--AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+--NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}" \
+-jar target/url-shortener-0.0.1-SNAPSHOT.jar
+
+./mvnw spring-boot:run \
+-Dspring-boot.run.profiles=local \
+-Dspring-boot.run.arguments="--AWS_REGION=us-east-1 \
+--SPRING_REDIS_HOST=${SPRING_REDIS_HOST} \
+--AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+--AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+--NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}"
