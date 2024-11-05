@@ -45,7 +45,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUrlNotFoundException(UrlNotFoundException ex) {
         log.error("An URL not found error occurred: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler({
@@ -57,21 +59,27 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception ex) {
         log.error("A bad request error occurred: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler(UrlDisabledException.class)
     public ResponseEntity<ErrorResponse> handleUrlDisabledException(UrlDisabledException ex) {
         log.error("An URL disabled error occurred: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.GONE.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler(IdGenerationException.class)
     public ResponseEntity<ErrorResponse> handleInternalServerError(IdGenerationException ex) {
         log.error("An ID generation error occurred: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.PRECONDITION_FAILED.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -81,7 +89,9 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Validation Failed", errors);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -91,7 +101,9 @@ public class GlobalExceptionHandler {
         ex.getConstraintViolations()
                 .forEach(violation -> errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Constraint violations", errors);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler({
@@ -103,14 +115,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDatabaseExceptions(Exception ex) {
         log.error("A database error occurred: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
         log.error("An unexpected error occurred: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred.");
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        var responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        observabilityHelper.addResponseBody(responseEntity);
+        return responseEntity;
     }
 
 }
