@@ -1,11 +1,16 @@
 package com.reginaldolribeiro.url_shortener.adapter.configuration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.reginaldolribeiro.url_shortener.FixtureTests;
+import com.reginaldolribeiro.url_shortener.adapter.repository.user.UserEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
@@ -37,6 +42,41 @@ class JacksonConfigTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    @Qualifier("cacheObjectMapper")
+    private ObjectMapper cacheObjectMapper;
+
+    @Nested
+    @DisplayName("cacheObjectMapper Tests")
+    class CacheObjectMapperTests {
+
+        @Test
+        @DisplayName("cacheObjectMapper should include @class type information")
+        void testSerializationWithTypeInfo() throws JsonProcessingException {
+            UserEntity userEntity = FixtureTests.createSampleUserEntity();
+
+            var json = cacheObjectMapper.writerFor(new TypeReference<UserEntity>() {}).writeValueAsString(userEntity);
+            System.out.println("Serialized JSON: " + json);
+            assertTrue(json.contains("@class"), "JSON should contain @class for type information");
+        }
+
+        @Test
+        @DisplayName("cacheObjectMapper should handle snake_case naming strategy")
+        void shouldUseSnakeCaseNamingStrategyInCache() {
+            assertEquals(PropertyNamingStrategies.SNAKE_CASE, cacheObjectMapper.getPropertyNamingStrategy());
+        }
+
+        @Test
+        @DisplayName("cacheObjectMapper should serialize Optional values correctly")
+        void shouldHandleOptionalSerializationInCache() throws JsonProcessingException {
+            String result = cacheObjectMapper.writeValueAsString(Optional.empty());
+            assertEquals("null", result);
+
+            String presentOptional = cacheObjectMapper.writeValueAsString(Optional.of("example"));
+            assertEquals("\"example\"", presentOptional);
+        }
+    }
 
     @Nested
     @DisplayName("Naming Strategy Tests")

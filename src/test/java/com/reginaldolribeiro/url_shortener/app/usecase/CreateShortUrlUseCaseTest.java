@@ -6,7 +6,6 @@ import com.reginaldolribeiro.url_shortener.app.domain.User;
 import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
 import com.reginaldolribeiro.url_shortener.app.exception.UserNotFoundException;
 import com.reginaldolribeiro.url_shortener.app.port.IdGeneratorPort;
-import com.reginaldolribeiro.url_shortener.app.port.UrlCacheRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UrlRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.port.UserRepositoryPort;
 import com.reginaldolribeiro.url_shortener.app.usecase.url.CreateShortUrlInput;
@@ -40,8 +39,6 @@ class CreateShortUrlUseCaseTest {
     @Mock
     private UrlRepositoryPort urlRepositoryPort;
     @Mock
-    private UrlCacheRepositoryPort urlCacheRepositoryPort;
-    @Mock
     private IdGeneratorPort idGeneratorPort;
 
 
@@ -65,9 +62,6 @@ class CreateShortUrlUseCaseTest {
             when(userRepositoryPort.findById(USER_ID)).thenReturn(Optional.of(USER));
             when(idGeneratorPort.generate()).thenReturn(shortUrlCode);
 
-            doNothing().when(urlRepositoryPort).save(any(Url.class));
-            doNothing().when(urlCacheRepositoryPort).save(any(Url.class));
-
             var output = createShortUrlUseCase.execute(input);
 
             assertNotNull(output);
@@ -81,7 +75,6 @@ class CreateShortUrlUseCaseTest {
             verify(userRepositoryPort, times(1)).findById(USER_ID);
             verify(idGeneratorPort, times(1)).generate();
             verify(urlRepositoryPort, times(1)).save(any(Url.class));
-            verify(urlCacheRepositoryPort, times(1)).save(any(Url.class));
         }
 
         @Test
@@ -100,8 +93,6 @@ class CreateShortUrlUseCaseTest {
             // Set up mocks for the first user and URL
             when(userRepositoryPort.findById(userId1)).thenReturn(Optional.of(user1));
             when(idGeneratorPort.generate()).thenReturn(expectedShortUrl1);
-            doNothing().when(urlRepositoryPort).save(any(Url.class));
-            doNothing().when(urlCacheRepositoryPort).save(any(Url.class));
 
             // Execute the first creation
             var output1 = createShortUrlUseCase.execute(input1);
@@ -125,7 +116,6 @@ class CreateShortUrlUseCaseTest {
             verify(userRepositoryPort, times(1)).findById(userId2);
             verify(idGeneratorPort, times(2)).generate();  // ID generation called separately for each request
             verify(urlRepositoryPort, times(2)).save(any(Url.class));
-            verify(urlCacheRepositoryPort, times(2)).save(any(Url.class));
         }
 
     }
@@ -147,7 +137,6 @@ class CreateShortUrlUseCaseTest {
             verify(userRepositoryPort, times(1)).findById(nullableUserId);
             verifyNoInteractions(idGeneratorPort);
             verifyNoInteractions(urlRepositoryPort);
-            verifyNoInteractions(urlCacheRepositoryPort);
         }
 
         @Test
@@ -162,7 +151,6 @@ class CreateShortUrlUseCaseTest {
             verify(userRepositoryPort, times(1)).findById(invalidUserId);
             verifyNoInteractions(idGeneratorPort);
             verifyNoInteractions(urlRepositoryPort);
-            verifyNoInteractions(urlCacheRepositoryPort);
         }
 
         @Test
@@ -178,7 +166,6 @@ class CreateShortUrlUseCaseTest {
             verify(userRepositoryPort, times(1)).findById(USER_ID);
             verify(idGeneratorPort, times(1)).generate();
             verifyNoInteractions(urlRepositoryPort);
-            verifyNoInteractions(urlCacheRepositoryPort);
         }
 
     }

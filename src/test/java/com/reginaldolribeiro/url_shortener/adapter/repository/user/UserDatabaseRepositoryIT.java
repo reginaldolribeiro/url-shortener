@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {DynamoDbTestConfiguration.class, UserDatabaseRepository.class})
+@SpringBootTest(classes = {DynamoDbTestConfiguration.class, UserDatabaseRepository.class, UserDynamoDbRepository.class})
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -27,6 +27,9 @@ class UserDatabaseRepositoryIT {
 
     @Autowired
     private UserDatabaseRepository userDatabaseRepository;
+
+    @Autowired
+    private UserDynamoDbRepository userDynamoDbRepository;
 
     @Autowired
     private DynamoDbClient dynamoDbClient;

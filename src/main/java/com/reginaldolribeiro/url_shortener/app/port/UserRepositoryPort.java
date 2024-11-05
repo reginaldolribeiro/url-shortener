@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface UserRepositoryPort {
     Optional<User> findById(String userId);
-    void save(User user);
+    User save(User user);
 }

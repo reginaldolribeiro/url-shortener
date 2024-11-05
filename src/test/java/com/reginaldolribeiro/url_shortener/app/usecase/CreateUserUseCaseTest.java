@@ -42,8 +42,6 @@ class CreateUserUseCaseTest {
             var userInput = FixtureTests.createSampleUserInput();
             var expectedUser = User.create(userInput.name(), userInput.email());
 
-            doNothing().when(userRepositoryPort).save(any(User.class));
-
             var userOutput = createUserUseCase.save(userInput);
 
             assertAll(

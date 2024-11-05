@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = {DynamoDbTestConfiguration.class, UrlDatabaseRepository.class})
+@SpringBootTest(classes = {DynamoDbTestConfiguration.class, UrlDatabaseRepository.class, UrlDynamoDbRepository.class})
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -34,6 +34,9 @@ public class UrlDatabaseRepositoryIT {
 
     @Autowired
     private UrlDatabaseRepository urlDatabaseRepository;
+
+    @Autowired
+    private UrlDynamoDbRepository urlDynamoDbRepository;
 
     @MockBean
     private UserRepositoryPort userRepositoryPort;
@@ -68,7 +71,6 @@ public class UrlDatabaseRepositoryIT {
                     .billingMode(BillingMode.PAY_PER_REQUEST)
                     .build());
         }
-        urlDatabaseRepository.save(URL);
     }
 
 
@@ -104,7 +106,7 @@ public class UrlDatabaseRepositoryIT {
                     () -> assertTrue(savedUrl.get().isActive())
             );
 
-            verify(userRepositoryPort, times(1)).findById(user.getId().toString());
+            verify(userRepositoryPort, times(2)).findById(user.getId().toString());
         }
 
         @Test
@@ -126,6 +128,7 @@ public class UrlDatabaseRepositoryIT {
         void shouldFindUrlById(){
             when(userRepositoryPort.findById(URL.getUser().getId().toString()))
                     .thenReturn(Optional.of(URL.getUser()));
+            urlDatabaseRepository.save(URL);
 
             var savedUrl = assertDoesNotThrow(() -> urlDatabaseRepository.findByShortenedUrl(URL.getId()));
             assertTrue(savedUrl.isPresent());
@@ -138,7 +141,7 @@ public class UrlDatabaseRepositoryIT {
                     () -> assertEquals(URL.getClicks(), savedUrl.get().getClicks()),
                     () -> assertTrue(savedUrl.get().isActive())
             );
-            verify(userRepositoryPort, times(1)).findById(URL.getUser().getId().toString());
+            verify(userRepositoryPort, times(2)).findById(URL.getUser().getId().toString());
         }
 
         @Test
