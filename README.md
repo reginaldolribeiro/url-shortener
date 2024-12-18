@@ -104,6 +104,25 @@ Check the server’s health status by visiting:
 http://localhost:8080/api/actuator/health
 ```
 
+## 📖 API Documentation & Postman Collection
+
+### 🔗 Access Swagger UI
+
+You can explore and test the API endpoints using Swagger UI:
+
+- **URL**: [http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/api/swagger-ui/index.html)
+
+### 📥 Import Postman Collection
+
+If you prefer using Postman, download and import the collection:
+
+1. **Postman Collection File**: `src/main/java/resources/url-shortener-postman_collection.json`
+2. Import the collection in Postman to access all API endpoints and test them easily.
+
+---
+
+Both options provide a simple way to explore the API functionality for creating and retrieving shortened URLs.
+
 ## 📚 Project Dependencies
 - **Spring Boot:** Java framework for building web applications.
 - **Redis:** In-memory data store for caching.
