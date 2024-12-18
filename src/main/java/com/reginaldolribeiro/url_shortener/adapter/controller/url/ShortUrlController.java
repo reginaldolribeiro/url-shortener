@@ -18,7 +18,7 @@ import java.net.URI;
 @Validated
 @RestController()
 @RequestMapping("/short-url")
-public class ShortUrlController {
+public class ShortUrlController implements ShortUrlApiDocs {
 
     private final UrlSanitizer urlSanitizer;
     private final CreateShortUrlPort createShortUrlPort;

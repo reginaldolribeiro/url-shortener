@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController()
 @RequestMapping("/user")
 @Slf4j
-public class UserController {
+public class UserController implements UserApiDocs{
 
     private final CreateUserPort createUserPort;
     private final GetUserPort getUserPort;
