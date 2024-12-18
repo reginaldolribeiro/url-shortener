@@ -1,0 +1,44 @@
+{
+    "Table": {
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "shortUrlId",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "userId",
+                "AttributeType": "S"
+            }
+        ],
+        "TableName": "UrlMappings",
+        "KeySchema": [
+            {
+                "AttributeName": "shortUrlId",
+                "KeyType": "HASH"
+            },
+            {
+                "AttributeName": "userId",
+                "KeyType": "RANGE"
+            }
+        ],
+        "TableStatus": "ACTIVE",
+        "CreationDateTime": "2024-10-22T15:07:37.501000-03:00",
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 0,
+            "WriteCapacityUnits": 0
+        },
+        "TableSizeBytes": 2975,
+        "ItemCount": 16,
+        "TableArn": "arn:aws:dynamodb:us-east-1:826388264086:table/UrlMappings",
+        "TableId": "ec2b8aad-3b45-4cfa-9db8-6f69574e02f7",
+        "BillingModeSummary": {
+            "BillingMode": "PAY_PER_REQUEST",
+            "LastUpdateToPayPerRequestDateTime": "2024-10-22T15:07:37.501000-03:00"
+        },
+        "TableClassSummary": {
+            "TableClass": "STANDARD"
+        },
+        "DeletionProtectionEnabled": false
+    }
+}

@@ -14,6 +14,8 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
+import java.time.Duration;
+
 @Configuration
 @EnableCaching
 @Slf4j
@@ -24,6 +26,9 @@ public class RedisConfig {
 
     @Value("${spring.redis.port}")
     private int redisPort;
+
+    @Value("${spring.cache.redis.time-to-live}")
+    private long ttl;
 
     private final ObjectMapper cacheObjectMapper;
 
@@ -43,8 +48,8 @@ public class RedisConfig {
     public RedisCacheManager cacheManager(LettuceConnectionFactory connectionFactory) {
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                        new GenericJackson2JsonRedisSerializer(cacheObjectMapper)));
-//                .entryTtl(Duration.ofMinutes(10));
+                        new GenericJackson2JsonRedisSerializer(cacheObjectMapper)))
+                .entryTtl(Duration.ofMillis(ttl));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(cacheConfig)

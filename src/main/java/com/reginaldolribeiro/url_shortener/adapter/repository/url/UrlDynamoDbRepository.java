@@ -46,8 +46,6 @@ public class UrlDynamoDbRepository {
 
     @Cacheable(value = "urlCache", key = "#id", unless = "#result == null")
     public Optional<UrlEntity> findByShortenedUrl(String id) {
-//    @Cacheable(value = "urlCache", key = "#short_url_id")
-//    public Optional<UrlEntity> findByShortenedUrl(String short_url_id) {
         log.info("Searching for {} in the database", id);
         if(id == null || id.isBlank())
             throw new IllegalArgumentException("Url cannot be null.");
