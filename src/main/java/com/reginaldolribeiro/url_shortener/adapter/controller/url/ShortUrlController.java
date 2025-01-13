@@ -18,6 +18,7 @@ import java.net.URI;
 @Validated
 @RestController()
 @RequestMapping("/short-url")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class ShortUrlController implements ShortUrlApiDocs {
 
     private final UrlSanitizer urlSanitizer;
@@ -27,7 +28,9 @@ public class ShortUrlController implements ShortUrlApiDocs {
     @Value("${app.domain-name-prefix}")
     private String baseUrl;
 
-    public ShortUrlController(UrlSanitizer urlSanitizer, CreateShortUrlPort createShortUrlPort, GetLongUrlPort getLongUrlPort) {
+    public ShortUrlController(UrlSanitizer urlSanitizer,
+                              CreateShortUrlPort createShortUrlPort,
+                              GetLongUrlPort getLongUrlPort) {
         this.urlSanitizer = urlSanitizer;
         this.createShortUrlPort = createShortUrlPort;
         this.getLongUrlPort = getLongUrlPort;
