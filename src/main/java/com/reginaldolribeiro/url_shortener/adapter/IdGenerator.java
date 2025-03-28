@@ -2,11 +2,10 @@ package com.reginaldolribeiro.url_shortener.adapter;
 
 import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
 import com.reginaldolribeiro.url_shortener.app.port.IdGeneratorPort;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
+@Deprecated
 public class IdGenerator implements IdGeneratorPort {
     private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     public static final int SHORT_URL_ID_LENGTH = 7;
