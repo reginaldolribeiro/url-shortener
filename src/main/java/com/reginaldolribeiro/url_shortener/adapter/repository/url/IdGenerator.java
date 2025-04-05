@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.reginaldolribeiro.url_shortener.app.exception.IdGenerationException;
 import com.reginaldolribeiro.url_shortener.app.port.IdGeneratorPort;

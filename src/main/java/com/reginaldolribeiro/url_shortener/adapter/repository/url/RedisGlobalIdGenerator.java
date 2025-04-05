@@ -1,4 +1,4 @@
-package com.reginaldolribeiro.url_shortener.adapter;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.reginaldolribeiro.url_shortener.app.port.IdGeneratorPort;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -8,7 +8,7 @@ import org.sqids.Sqids;
 import java.util.List;
 
 @Service
-public class GlobalCounter implements IdGeneratorPort {
+public class RedisGlobalIdGenerator implements IdGeneratorPort {
 
     private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     public static final int SHORT_URL_ID_LENGTH = 7;
@@ -17,7 +17,7 @@ public class GlobalCounter implements IdGeneratorPort {
     private final StringRedisTemplate redisTemplate;
     private final Sqids sqids;
 
-    public GlobalCounter(StringRedisTemplate redisTemplate) {
+    public RedisGlobalIdGenerator(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.sqids = Sqids.builder()
                 .minLength(SHORT_URL_ID_LENGTH)

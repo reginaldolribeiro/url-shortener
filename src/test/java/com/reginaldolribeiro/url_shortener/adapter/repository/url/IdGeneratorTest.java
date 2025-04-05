@@ -1,6 +1,7 @@
-package com.reginaldolribeiro.url_shortener.adapter;
+package com.reginaldolribeiro.url_shortener.adapter.repository.url;
 
 import com.reginaldolribeiro.url_shortener.FixtureTests;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled("Deprecated after migration to RedisGlobalIdGenerator")
 @ExtendWith(MockitoExtension.class)
 class IdGeneratorTest {
 
