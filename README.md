@@ -123,7 +123,21 @@ If you prefer using Postman, download and import the collection:
 
 Both options provide a simple way to explore the API functionality for creating and retrieving shortened URLs.
 
+## 🔧 Technical Details
+
+### Short URL ID Generation
+The system combines two techniques to generate secure and efficient short URL IDs:
+1. **Redis Global Counter**: Uses Redis's INCR command to generate unique sequential numbers
+2. **Sqids Bijective Function**: Transforms sequential numbers into non-sequential strings using a bijective function, ensuring each number maps to a unique string and vice-versa
+
+This combined approach:
+- Ensures uniqueness across distributed systems
+- Prevents URL ID guessing by obscuring the sequential nature
+- Maintains high performance with Redis atomic operations
+- Generates compact and URL-safe identifiers
+
 ## 📚 Project Dependencies
 - **Spring Boot:** Java framework for building web applications.
 - **Redis:** In-memory data store for caching.
+- **Sqids:** A bijective function library used to generate URL-safe IDs from numbers and decode them back.
 - **AWS DynamoDB:** NoSQL database for storing shortened URLs.
